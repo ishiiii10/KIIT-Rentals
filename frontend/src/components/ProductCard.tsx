@@ -52,7 +52,8 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
   return (
     <Card
       sx={{
-        height: '100%',
+        width: '100%',
+        height: 450, // Fixed total height
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 3,
@@ -83,15 +84,16 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
         }}
       />
 
-      {/* Product image */}
-      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+      {/* Product image - fixed height */}
+      <Box sx={{ position: 'relative', height: 200, width: '100%', overflow: 'hidden' }}>
         <CardMedia
           component="img"
           image={product.image}
           alt={product.name}
           onError={handleImageError}
           sx={{
-            height: 200,
+            width: '100%',
+            height: '100%',
             objectFit: 'cover',
             transition: 'transform 0.5s',
             '&:hover': {
@@ -123,12 +125,11 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
         )}
       </Box>
 
-      {/* Product details */}
-      <CardContent sx={{ flexGrow: 1, p: 2.5, pb: 1.5 }}>
+      {/* Product details - fixed height */}
+      <CardContent sx={{ p: 2.5, pb: 1.5, height: 110, display: 'flex', flexDirection: 'column' }}>
         <Typography 
           variant="h6" 
           component="h3" 
-          gutterBottom 
           sx={{ 
             fontWeight: 'bold',
             fontSize: '1.1rem',
@@ -144,7 +145,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
           {product.name}
         </Typography>
         
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 'auto' }}>
           <Typography 
             variant="h5" 
             color="primary" 
@@ -170,8 +171,8 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
 
       <Divider sx={{ mx: 2, opacity: 0.6 }} />
 
-      {/* Action buttons */}
-      <CardActions sx={{ p: 2, pt: 1.5 }}>
+      {/* Action buttons - fixed height */}
+      <CardActions sx={{ p: 2, pt: 1.5, height: 120, flexShrink: 0 }}>
         {isOwner ? (
           <Stack direction="row" spacing={1} width="100%">
             <Button 

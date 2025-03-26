@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
+import Grid from '@mui/material/Grid';
 import { 
   Container, 
   Typography, 
   Box, 
   Button, 
-  Grid, 
   Paper,
   CircularProgress,
   Divider,
@@ -318,7 +318,10 @@ const Home = () => {
                     sx={{ 
                       transform: 'translateY(0)',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                      height: '100%',
+                      width: '100%',
+                      maxWidth: 300,
+                      height: 450,
+                      mx: 'auto',
                       '&:hover': {
                         transform: 'translateY(-10px)',
                       }

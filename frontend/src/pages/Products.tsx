@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import Grid from '@mui/material/Grid';
 import { 
   Container, 
   Typography, 
-  Grid, 
   Box, 
   CircularProgress, 
   TextField, 
@@ -81,21 +81,6 @@ const Products = () => {
     }
   };
 
-  const renderSkeletons = () => {
-    return Array(8).fill(null).map((_, index) => (
-      <Grid item xs={12} sm={6} md={4} lg={3} key={`skeleton-${index}`} component="div">
-        <Paper sx={{ borderRadius: 2, overflow: 'hidden', height: '100%' }}>
-          <Skeleton variant="rectangular" width="100%" height={200} />
-          <Box sx={{ p: 2 }}>
-            <Skeleton variant="text" width="80%" height={32} />
-            <Skeleton variant="text" width="50%" height={24} />
-            <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
-          </Box>
-        </Paper>
-      </Grid>
-    ));
-  };
-
   if (error) {
     return (
       <Container sx={{ py: 8 }}>
@@ -170,7 +155,7 @@ const Products = () => {
             }}
           >
             <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
-              <Grid item xs={12} md={6} component="div">
+              <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -204,7 +189,7 @@ const Products = () => {
                 />
               </Grid>
               
-              <Grid item xs={12} md={6} component="div">
+              <Grid item xs={12} md={6}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                   <ToggleButtonGroup
                     value={listingType}
@@ -317,46 +302,81 @@ const Products = () => {
           </Box>
 
           {/* Products grid */}
-          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
-            {loading ? (
-              renderSkeletons()
-            ) : filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id} component="div">
-                  <ProductCard product={product} />
+          {loading ? (
+            <Grid container spacing={3} justifyContent="center">
+              {Array(8).fill(null).map((_, index) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={`skeleton-${index}`}>
+                  <Paper sx={{ 
+                    borderRadius: 2, 
+                    overflow: 'hidden', 
+                    height: 450, 
+                    width: '100%',
+                    maxWidth: 300,
+                    mx: 'auto'
+                  }}>
+                    <Skeleton variant="rectangular" width="100%" height={200} />
+                    <Box sx={{ p: 2 }}>
+                      <Skeleton variant="text" width="80%" height={32} />
+                      <Skeleton variant="text" width="50%" height={24} />
+                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
+                    </Box>
+                  </Paper>
                 </Grid>
-              ))
-            ) : (
-              <Grid item xs={12} component="div">
-                <Paper
-                  sx={{
-                    p: 4,
-                    textAlign: 'center',
-                    borderRadius: 2,
+              ))}
+            </Grid>
+          ) : (
+            <>
+              {filteredProducts.length === 0 ? (
+                <Paper 
+                  sx={{ 
+                    p: 4, 
+                    textAlign: 'center', 
+                    mt: 3,
+                    borderRadius: 3,
                     backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                    border: '1px solid rgba(88, 128, 97, 0.1)',
+                    border: '1px solid rgba(88, 128, 97, 0.1)'
                   }}
                 >
-                  <Typography variant="h6" gutterBottom color="text.secondary" sx={{ mb: 2 }}>
+                  <Typography variant="h5" gutterBottom fontWeight="bold" color="primary">
                     No products found
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                    Try adjusting your search or filters to find what you're looking for.
+                  <Typography color="text.secondary" sx={{ mb: 3 }}>
+                    Try changing your search criteria or check back later for new listings.
                   </Typography>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => {
-                      setSearchTerm('');
-                      setListingType('all');
-                    }}
-                  >
-                    Clear Filters
-                  </Button>
                 </Paper>
-              </Grid>
-            )}
-          </Grid>
+              ) : (
+                <Box sx={{ mt: 3 }}>
+                  <Grid 
+                    container 
+                    spacing={3} 
+                    justifyContent="center"
+                  >
+                    {filteredProducts.map((product) => (
+                      <Grid 
+                        item 
+                        xs={12} 
+                        sm={6} 
+                        md={4} 
+                        lg={3} 
+                        key={product._id}
+                      >
+                        <Box 
+                          sx={{ 
+                            width: '100%',
+                            maxWidth: 300,
+                            height: 450,
+                            mx: 'auto'
+                          }}
+                        >
+                          <ProductCard product={product} />
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+            </>
+          )}
         </Box>
       </Container>
     </Box>

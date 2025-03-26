@@ -24,7 +24,8 @@ import {
   useTheme,
   useMediaQuery,
   alpha,
-  Chip
+  Chip,
+  Input
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -62,8 +63,15 @@ const validationSchema = Yup.object({
     .required('Price is required')
     .positive('Price must be positive'),
   image: Yup.string()
-    .required('Image URL is required')
-    .url('Must be a valid URL'),
+    .required('Image is required')
+    .test('is-url-or-file', 'Please provide a valid image URL or upload a file', 
+      function(value) {
+        // Accept value if it's a valid URL or the image was uploaded
+        return (
+          (value && value.startsWith('data:image')) || // Base64 image data
+          (value && (value.startsWith('http://') || value.startsWith('https://')))
+        );
+      }),
   type: Yup.string().oneOf(['sale', 'rent'], 'Type must be either sale or rent').required('Listing type is required'),
   phone: Yup.string()
     .required('Phone number is required')
@@ -74,6 +82,45 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isNewProduct = !initialValues._id;
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+
+  // Function to handle file upload and convert to JPG
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: Function) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Only allow image files
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Create canvas to convert image to JPG
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw image on canvas with white background (to handle transparency)
+        if (ctx) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          
+          // Convert to JPEG format
+          const jpgImage = canvas.toDataURL('image/jpeg', 0.9); // 0.9 is quality (0-1)
+          setUploadedImage(jpgImage);
+          setFieldValue('image', jpgImage);
+        }
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <Paper
@@ -171,7 +218,7 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
           }}
           enableReinitialize
         >
-          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => (
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid, setFieldValue }) => (
             <Box component="form" onSubmit={handleSubmit} noValidate>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -2 }}>
                 {/* Left Column */}
@@ -381,6 +428,40 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                   >
                     Image Preview
                   </Typography>
+
+                  {/* File Upload Section */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Upload an image (JPG format):
+                    </Typography>
+                    <Button
+                      variant="outlined"
+                      component="label"
+                      startIcon={<AddPhotoAlternateIcon />}
+                      sx={{ 
+                        borderRadius: 2, 
+                        p: 1.5,
+                        borderColor: alpha(theme.palette.divider, 0.8),
+                        width: '100%',
+                        justifyContent: 'flex-start'
+                      }}
+                    >
+                      Choose Image File
+                      <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, setFieldValue)}
+                      />
+                    </Button>
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                      Your image will be automatically converted to JPG format
+                    </Typography>
+                  </Box>
+                  
+                  <Divider sx={{ my: 2 }}>
+                    <Chip label="OR" size="small" />
+                  </Divider>
                   
                   <Box sx={{ mb: 3 }}>
                     <TextField
@@ -450,7 +531,7 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                         />
                         <Box sx={{ mt: 1, textAlign: 'center' }}>
                           <Typography variant="caption" color="text.secondary">
-                            Image Preview
+                            Image Preview (JPG format)
                           </Typography>
                         </Box>
                       </Box>
@@ -470,7 +551,7 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                       >
                         <PhotoCameraIcon sx={{ fontSize: 48, color: alpha(theme.palette.text.secondary, 0.5), mb: 2 }} />
                         <Typography variant="body1" color="text.secondary" align="center">
-                          Add an image URL to see preview
+                          Add an image URL or upload a file to see preview
                         </Typography>
                       </Box>
                     )}
