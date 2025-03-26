@@ -102,7 +102,7 @@ const Navbar = () => {
         sx={{ 
           backgroundImage: 'linear-gradient(90deg, #FDE9EA 0%, #F9E0DB 100%)',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
-          color: '#588061',
+          color: '#2E5D41',
         }}
       >
         <Container sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
@@ -113,7 +113,8 @@ const Navbar = () => {
                 sx={{ 
                   mr: 1.5,
                   fontSize: { md: 28, lg: 32 },
-                  filter: 'drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15))'
+                  filter: 'drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.15))',
+                  color: '#2E5D41'
                 }} 
               />
               <Typography
@@ -216,11 +217,11 @@ const Navbar = () => {
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       {page.icon && (
-                        <Box component="span" sx={{ mr: 1, display: 'flex', color: isActive(page.path) ? "primary.main" : "inherit" }}>
+                        <Box component="span" sx={{ mr: 1, display: 'flex', color: isActive(page.path) ? "#2E5D41" : "#2E5D41" }}>
                           {page.icon}
                         </Box>
                       )}
-                      <Typography textAlign="center" fontWeight={isActive(page.path) ? "600" : "500"} color={isActive(page.path) ? "primary" : "inherit"}>
+                      <Typography textAlign="center" fontWeight={isActive(page.path) ? "600" : "500"} color={isActive(page.path) ? "#2E5D41" : "#2E5D41"}>
                         {page.name}
                       </Typography>
                     </Box>
@@ -243,7 +244,7 @@ const Navbar = () => {
                       }
                     }}
                   >
-                    <Typography textAlign="center" fontWeight={isActive('/my-products') ? "600" : "500"} color={isActive('/my-products') ? "primary" : "inherit"}>
+                    <Typography textAlign="center" fontWeight={isActive('/my-products') ? "600" : "500"} color={isActive('/my-products') ? "#2E5D41" : "#2E5D41"}>
                       My Listings
                     </Typography>
                   </MenuItem>
@@ -257,7 +258,8 @@ const Navbar = () => {
                 sx={{ 
                   mr: 1,
                   fontSize: 26,
-                  filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15))'
+                  filter: 'drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.15))',
+                  color: '#2E5D41'
                 }} 
               />
               <Typography
@@ -297,7 +299,7 @@ const Navbar = () => {
                   onClick={handleCloseNavMenu}
                   startIcon={page.icon}
                   sx={{ 
-                    color: 'white', 
+                    color: '#2E5D41', 
                     display: 'flex',
                     alignItems: 'center',
                     height: 40,
@@ -305,10 +307,10 @@ const Navbar = () => {
                     position: 'relative',
                     overflow: 'hidden',
                     fontWeight: isActive(page.path) ? 600 : 500,
-                    backgroundColor: isActive(page.path) ? alpha('#588061', 0.15) : 'transparent',
+                    backgroundColor: isActive(page.path) ? alpha('#2E5D41', 0.15) : 'transparent',
                     borderRadius: 2,
                     '&:hover': {
-                      backgroundColor: alpha('#588061', 0.15),
+                      backgroundColor: alpha('#2E5D41', 0.15),
                     },
                     '&::after': isActive(page.path) ? {
                       content: '""',
@@ -318,7 +320,7 @@ const Navbar = () => {
                       transform: 'translateX(-50%)',
                       width: '30%',
                       height: '3px',
-                      backgroundColor: '#588061',
+                      backgroundColor: '#2E5D41',
                       borderRadius: '3px'
                     } : {}
                   }}
@@ -333,7 +335,7 @@ const Navbar = () => {
                   onClick={handleCloseNavMenu}
                   startIcon={<ShoppingCartIcon />}
                   sx={{ 
-                    color: 'white',
+                    color: '#2E5D41',
                     display: 'flex',
                     alignItems: 'center', 
                     height: 40,
@@ -341,10 +343,10 @@ const Navbar = () => {
                     position: 'relative',
                     overflow: 'hidden',
                     fontWeight: isActive('/my-products') ? 600 : 500,
-                    backgroundColor: isActive('/my-products') ? alpha('#588061', 0.15) : 'transparent',
+                    backgroundColor: isActive('/my-products') ? alpha('#2E5D41', 0.15) : 'transparent',
                     borderRadius: 2,
                     '&:hover': {
-                      backgroundColor: alpha('#588061', 0.15),
+                      backgroundColor: alpha('#2E5D41', 0.15),
                     },
                     '&::after': isActive('/my-products') ? {
                       content: '""',
@@ -354,7 +356,7 @@ const Navbar = () => {
                       transform: 'translateX(-50%)',
                       width: '30%',
                       height: '3px',
-                      backgroundColor: '#588061',
+                      backgroundColor: '#2E5D41',
                       borderRadius: '3px'
                     } : {}
                   }}
@@ -369,11 +371,11 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <>
                   <Tooltip title="Open settings">
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, border: '2px solid', borderColor: alpha('#588061', 0.3) }}>
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, border: '2px solid', borderColor: alpha('#2E5D41', 0.3) }}>
                       <Avatar 
                         sx={{ 
                           bgcolor: '#E7B5EC',
-                          color: '#588061',
+                          color: '#2E5D41',
                           fontWeight: 'bold',
                           width: 40,
                           height: 40,
@@ -431,16 +433,16 @@ const Navbar = () => {
                     component={Link} 
                     to="/login" 
                     sx={{ 
-                      color: '#588061', 
+                      color: '#2E5D41', 
                       marginRight: 1.5,
                       fontWeight: 500,
                       px: 2,
                       borderRadius: 2,
                       border: '1px solid',
-                      borderColor: alpha('#588061', 0.5),
+                      borderColor: alpha('#2E5D41', 0.5),
                       '&:hover': {
-                        backgroundColor: alpha('#588061', 0.15),
-                        borderColor: '#588061',
+                        backgroundColor: alpha('#2E5D41', 0.15),
+                        borderColor: '#2E5D41',
                       }
                     }}
                   >
@@ -450,15 +452,15 @@ const Navbar = () => {
                     component={Link} 
                     to="/register" 
                     sx={{ 
-                      color: '#588061', 
+                      color: '#2E5D41', 
                       fontWeight: 500,
                       px: 2,
                       borderRadius: 2,
                       border: '1px solid',
-                      borderColor: alpha('#588061', 0.5),
+                      borderColor: alpha('#2E5D41', 0.5),
                       '&:hover': {
-                        backgroundColor: alpha('#588061', 0.15),
-                        borderColor: '#588061',
+                        backgroundColor: alpha('#2E5D41', 0.15),
+                        borderColor: '#2E5D41',
                       }
                     }}
                   >
