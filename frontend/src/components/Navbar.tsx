@@ -439,19 +439,16 @@ const Navbar = () => {
                   <Button 
                     component={Link} 
                     to="/register" 
-                    variant="contained" 
                     sx={{ 
-                      fontWeight: 'bold',
-                      boxShadow: '0 4px 8px rgba(231, 181, 236, 0.25)',
+                      color: '#588061', 
+                      fontWeight: 500,
                       px: 2,
                       borderRadius: 2,
-                      backgroundColor: '#E7B5EC',
-                      color: '#588061',
-                      transition: 'all 0.3s ease',
+                      border: '1px solid',
+                      borderColor: alpha('#588061', 0.5),
                       '&:hover': {
-                        transform: 'translateY(-3px)',
-                        boxShadow: '0 6px 12px rgba(231, 181, 236, 0.35)',
-                        backgroundColor: '#d99fe2',
+                        backgroundColor: alpha('#588061', 0.15),
+                        borderColor: '#588061',
                       }
                     }}
                   >
