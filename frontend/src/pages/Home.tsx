@@ -25,6 +25,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
+import { alpha } from '@mui/material/styles';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
@@ -81,8 +82,8 @@ const Home = () => {
           background: 'linear-gradient(135deg, #588061 0%, #3E5A43 100%)',
           color: 'white',
           overflow: 'hidden',
-          pt: { xs: 8, md: 12 },
-          pb: { xs: 10, md: 12 },
+          pt: { xs: 6, sm: 8, md: 12 },
+          pb: { xs: 8, sm: 10, md: 12 },
         }}
       >
         {/* Background elements */}
@@ -128,6 +129,8 @@ const Home = () => {
                     fontWeight: 800,
                     mb: 2,
                     textShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                    fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' },
+                    lineHeight: 1.2
                   }}
                 >
                   Buy, Sell & Rent at KIIT
@@ -139,7 +142,9 @@ const Home = () => {
                     mb: 4,
                     fontWeight: 400,
                     opacity: 0.9,
-                    maxWidth: { md: '90%' }
+                    maxWidth: { md: '90%' },
+                    fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
+                    lineHeight: 1.5
                   }}
                 >
                   The ultimate marketplace exclusively for KIIT students. From electronics to books, 
@@ -215,7 +220,7 @@ const Home = () => {
       </Box>
 
       {/* Benefits Section */}
-      <Container sx={{ py: { xs: 6, md: 10 }, position: 'relative' }}>
+      <Container sx={{ py: { xs: 5, md: 10 }, position: 'relative' }}>
         <Box 
           sx={{ 
             position: 'absolute', 
@@ -241,13 +246,14 @@ const Home = () => {
           }} 
         />
       
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography 
             variant="h3" 
             component="h2" 
             fontWeight="bold" 
             color="primary"
             gutterBottom
+            sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
           >
             Why Use KIIT Rentals?
           </Typography>
@@ -257,42 +263,56 @@ const Home = () => {
             sx={{ 
               maxWidth: 700, 
               mx: 'auto', 
-              mb: 2 
+              mb: 2,
+              fontSize: { xs: '1rem', md: '1.25rem' },
+              px: { xs: 2, sm: 0 }
             }}
           >
             A platform created by students, for students, to make campus life easier and more affordable.
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} justifyContent="center">
           {benefits.map((benefit, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card 
-                elevation={0}
+                elevation={2}
                 sx={{ 
                   height: '100%', 
+                  display: 'flex',
+                  flexDirection: 'column',
                   textAlign: 'center',
-                  backgroundColor: 'transparent',
-                  transition: 'transform 0.3s',
+                  backgroundColor: 'white',
+                  borderRadius: 3,
+                  p: 1,
+                  transition: 'transform 0.3s, box-shadow 0.3s',
                   '&:hover': {
                     transform: 'translateY(-10px)',
+                    boxShadow: '0 10px 20px rgba(88, 128, 97, 0.15)',
                   }
                 }}
               >
-                <CardContent>
+                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexGrow: 1, p: { xs: 2, md: 3 } }}>
                   <Box 
                     sx={{ 
                       mb: 2, 
                       display: 'flex', 
                       justifyContent: 'center',
+                      alignItems: 'center',
+                      width: 80,
+                      height: 80,
+                      borderRadius: '50%',
+                      backgroundColor: alpha('#588061', 0.1),
                       '& .MuiSvgIcon-root': {
-                        fontSize: 50
+                        fontSize: 40,
+                        color: '#588061'
                       }
                     }}
                   >
                     {benefit.icon}
                   </Box>
-                  <Typography variant="h5" component="h3" gutterBottom fontWeight="bold">
+                  <Typography variant="h5" component="h3" gutterBottom fontWeight="bold" color="#588061"
+                    sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' }, mb: 2 }}>
                     {benefit.title}
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
@@ -306,10 +326,11 @@ const Home = () => {
       </Container>
 
       {/* Featured Products Section */}
-      <Box sx={{ bgcolor: 'rgba(108, 99, 255, 0.05)', py: { xs: 6, md: 10 } }}>
+      <Box sx={{ bgcolor: 'rgba(88, 128, 97, 0.05)', py: { xs: 5, md: 10 } }}>
         <Container>
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary">
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+            <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary"
+              sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}>
               Featured Items
             </Typography>
             <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
@@ -351,9 +372,10 @@ const Home = () => {
       </Box>
 
       {/* How It Works Section */}
-      <Container sx={{ py: { xs: 6, md: 10 } }}>
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
-          <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary">
+      <Container sx={{ py: { xs: 5, md: 10 } }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+          <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary"
+            sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}>
             How It Works
           </Typography>
           <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
@@ -517,7 +539,7 @@ const Home = () => {
         sx={{ 
           background: 'linear-gradient(45deg, rgba(88, 128, 97, 0.9) 0%, rgba(231, 181, 236, 0.9) 100%)',
           color: 'white',
-          py: { xs: 6, md: 8 },
+          py: { xs: 4, sm: 6, md: 8 },
           mt: 4
         }}
       >

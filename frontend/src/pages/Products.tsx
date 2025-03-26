@@ -111,23 +111,31 @@ const Products = () => {
       sx={{ 
         backgroundColor: 'background.default',
         minHeight: '100vh',
-        pt: 4,
-        pb: 8
+        pt: { xs: 3, sm: 4 },
+        pb: { xs: 6, md: 8 }
       }}
     >
       <Container>
         {/* Header Section */}
-        <Box sx={{ mb: 5 }}>
+        <Box sx={{ mb: { xs: 3, md: 5 } }}>
           <Typography 
             variant="h3" 
             component="h1" 
             gutterBottom 
             fontWeight="bold"
             color="primary"
+            sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
           >
             Explore Products
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
+          <Typography 
+            variant="h6" 
+            color="text.secondary" 
+            sx={{ 
+              mb: { xs: 3, md: 4 },
+              fontSize: { xs: '1rem', md: '1.25rem' }
+            }}
+          >
             Discover what fellow KIIT students are selling and renting
           </Typography>
           
@@ -135,13 +143,13 @@ const Products = () => {
           <Paper
             elevation={0}
             sx={{
-              p: 2,
+              p: { xs: 1.5, sm: 2 },
               borderRadius: 3,
               border: '1px solid rgba(88, 128, 97, 0.1)',
               backgroundColor: 'white',
             }}
           >
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
@@ -313,15 +321,15 @@ const Products = () => {
         </Box>
 
         {/* Products Grid */}
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, md: 3 }}>
           {loading ? (
             renderSkeletons()
           ) : filteredProducts.length === 0 ? (
             <Grid item xs={12}>
               <Paper
                 sx={{
-                  py: 8,
-                  px: 4,
+                  py: { xs: 6, md: 8 },
+                  px: { xs: 2, sm: 4 },
                   textAlign: 'center',
                   borderRadius: 2,
                   backgroundColor: 'rgba(88, 128, 97, 0.03)',

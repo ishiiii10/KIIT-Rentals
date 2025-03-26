@@ -15,6 +15,7 @@ import {
   Divider,
   InputAdornment,
   IconButton,
+  useMediaQuery,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -43,6 +44,7 @@ const Register = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const formik = useFormik({
     initialValues: {
@@ -72,8 +74,8 @@ const Register = () => {
   };
 
   return (
-    <Container component="main" maxWidth="lg" sx={{ py: 8 }}>
-      <Grid container spacing={4} alignItems="center" justifyContent="center">
+    <Container component="main" maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+      <Grid container spacing={{ xs: 3, md: 4 }} alignItems="center" justifyContent="center">
         {/* Left side - Illustration and info */}
         <Grid 
           item 
@@ -101,13 +103,13 @@ const Register = () => {
                 width: '100%',
                 maxWidth: 450,
                 height: 'auto',
-                mb: 4,
+                mb: { xs: 3, md: 4 },
                 mx: 'auto',
               }}
             />
             
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h5" color="primary" fontWeight="bold" gutterBottom>
+            <Box sx={{ textAlign: 'center', maxWidth: "90%", mx: "auto" }}>
+              <Typography variant={isMobile ? "h6" : "h5"} color="primary" fontWeight="bold" gutterBottom>
                 Join KIIT Rentals
               </Typography>
               <Typography variant="body1" color="text.secondary" paragraph>
@@ -159,10 +161,10 @@ const Register = () => {
               }}
             />
             
-            <Avatar sx={{ m: 1, bgcolor: theme.palette.secondary.main, width: 56, height: 56 }}>
-              <PersonAddIcon fontSize="large" />
+            <Avatar sx={{ m: 1, bgcolor: theme.palette.secondary.main, width: { xs: 48, md: 56 }, height: { xs: 48, md: 56 } }}>
+              <PersonAddIcon fontSize={isMobile ? "medium" : "large"} />
             </Avatar>
-            <Typography component="h1" variant="h4" fontWeight="bold" color="secondary.main" sx={{ mt: 1, mb: 3 }}>
+            <Typography component="h1" variant={isMobile ? "h5" : "h4"} fontWeight="bold" color="secondary.main" sx={{ mt: 1, mb: 3 }}>
               Create Account
             </Typography>
             

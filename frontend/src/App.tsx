@@ -121,12 +121,12 @@ const theme = createTheme({
     MuiContainer: {
       styleOverrides: {
         root: {
-          paddingLeft: 0,
-          paddingRight: 0,
-          maxWidth: '100% !important',
+          paddingLeft: { xs: 2, sm: 3, md: 4 },
+          paddingRight: { xs: 2, sm: 3, md: 4 },
+          maxWidth: '1600px !important',
           '@media (min-width: 600px)': {
-            paddingLeft: 0,
-            paddingRight: 0,
+            paddingLeft: { xs: 2, sm: 3, md: 4 },
+            paddingRight: { xs: 2, sm: 3, md: 4 },
           },
         },
       },
@@ -168,9 +168,9 @@ function App() {
               sx={{ 
                 flex: 1,
                 width: '100%',
-                px: { xs: 0, sm: 2, md: 4 },
-                maxWidth: '1800px',
+                maxWidth: '100%',
                 mx: 'auto',
+                overflow: 'hidden',
               }}
             >
               <Routes>

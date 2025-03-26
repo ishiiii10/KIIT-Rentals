@@ -39,6 +39,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
   const theme = useTheme();
+  const isMobile = theme.breakpoints.down('sm');
 
   const formik = useFormik({
     initialValues: {
@@ -67,14 +68,14 @@ const Login = () => {
   };
 
   return (
-    <Container component="main" maxWidth="lg" sx={{ py: 8 }}>
-      <Grid container spacing={4} alignItems="center" justifyContent="center">
+    <Container component="main" maxWidth="lg" sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+      <Grid container spacing={{ xs: 3, md: 4 }} alignItems="center" justifyContent="center">
         {/* Left side - Login form */}
         <Grid item xs={12} md={6} lg={5}>
           <Paper
             elevation={3}
             sx={{
-              p: 4,
+              p: { xs: 3, md: 4 },
               borderRadius: 4,
               backgroundColor: 'white',
               display: 'flex',
@@ -110,10 +111,10 @@ const Login = () => {
               }}
             />
             
-            <Avatar sx={{ m: 1, bgcolor: theme.palette.primary.main, width: 56, height: 56 }}>
-              <LockOutlinedIcon fontSize="large" />
+            <Avatar sx={{ m: 1, bgcolor: theme.palette.primary.main, width: { xs: 48, md: 56 }, height: { xs: 48, md: 56 } }}>
+              <LockOutlinedIcon fontSize={isMobile ? "medium" : "large"} />
             </Avatar>
-            <Typography component="h1" variant="h4" fontWeight="bold" color="primary.main" sx={{ mt: 1, mb: 3 }}>
+            <Typography component="h1" variant={isMobile ? "h5" : "h4"} fontWeight="bold" color="primary.main" sx={{ mt: 1, mb: 3 }}>
               Welcome Back
             </Typography>
             
@@ -266,13 +267,13 @@ const Login = () => {
                 width: '100%',
                 maxWidth: 450,
                 height: 'auto',
-                mb: 4,
+                mb: { xs: 3, md: 4 },
                 mx: 'auto',
               }}
             />
             
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="h5" color="primary" fontWeight="bold" gutterBottom>
+            <Box sx={{ textAlign: 'center', maxWidth: "90%", mx: "auto" }}>
+              <Typography variant={isMobile ? "h6" : "h5"} color="primary" fontWeight="bold" gutterBottom>
                 KIIT Rentals Marketplace
               </Typography>
               <Typography variant="body1" color="text.secondary" paragraph>

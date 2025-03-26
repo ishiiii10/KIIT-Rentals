@@ -14,21 +14,22 @@ const Footer = () => {
       sx={{ 
         background: 'linear-gradient(135deg, #588061 0%, #3E5A43 100%)',
         color: 'white', 
-        py: 6, 
+        py: { xs: 4, sm: 5, md: 6 }, 
         mt: 'auto',
         boxShadow: '0 -5px 20px rgba(88, 128, 97, 0.15)'
       }}
     >
-      <Container maxWidth="lg">
-        <Grid container spacing={4} justifyContent="space-between">
+      <Container>
+        <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="space-between">
           <Grid item xs={12} sm={6} md={4}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <LocalMallIcon sx={{ fontSize: 28, mr: 1 }} />
-              <Typography variant="h5" fontWeight="bold" fontFamily="Poppins, sans-serif">
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1.5, md: 2 } }}>
+              <LocalMallIcon sx={{ fontSize: { xs: 24, md: 28 }, mr: 1 }} />
+              <Typography variant="h5" fontWeight="bold" fontFamily="Poppins, sans-serif" 
+                sx={{ fontSize: { xs: '1.2rem', md: '1.5rem' } }}>
                 KIIT RENTALS
               </Typography>
             </Box>
-            <Typography variant="body1" sx={{ mb: 3, opacity: 0.9 }}>
+            <Typography variant="body1" sx={{ mb: { xs: 2, md: 3 }, opacity: 0.9, fontSize: { xs: '0.9rem', md: '1rem' } }}>
               Helping KIIT students buy, sell, and rent items from each other on campus.
               Find what you need or offer what you don't need.
             </Typography>
@@ -81,7 +82,8 @@ const Footer = () => {
           </Grid>
 
           <Grid item xs={6} sm={3} md={2}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" fontWeight="bold" gutterBottom 
+              sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
               Platform
             </Typography>
             <Stack spacing={1.5}>
@@ -101,7 +103,8 @@ const Footer = () => {
           </Grid>
 
           <Grid item xs={6} sm={3} md={2}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" fontWeight="bold" gutterBottom
+              sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
               Support
             </Typography>
             <Stack spacing={1.5}>
@@ -121,7 +124,8 @@ const Footer = () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
+            <Typography variant="h6" fontWeight="bold" gutterBottom
+              sx={{ fontSize: { xs: '1rem', md: '1.25rem' } }}>
               Contact Us
             </Typography>
             <Typography variant="body2" paragraph sx={{ opacity: 0.9 }}>
@@ -139,13 +143,13 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 4, bgcolor: 'rgba(255, 255, 255, 0.2)' }} />
+        <Divider sx={{ my: { xs: 3, md: 4 }, bgcolor: 'rgba(255, 255, 255, 0.2)' }} />
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-          <Typography variant="body2" sx={{ opacity: 0.8 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'center', sm: 'flex-start' }, gap: 2 }}>
+          <Typography variant="body2" sx={{ opacity: 0.8, textAlign: { xs: 'center', sm: 'left' } }}>
             © {currentYear} KIIT Rentals. All rights reserved.
           </Typography>
-          <Stack direction="row" spacing={3}>
+          <Stack direction="row" spacing={{ xs: 2, md: 3 }} justifyContent={{ xs: 'center', sm: 'flex-end' }} width={{ xs: '100%', sm: 'auto' }}>
             <Link href="#" color="inherit" underline="hover" variant="body2" sx={{ opacity: 0.8 }}>
               Terms
             </Link>
