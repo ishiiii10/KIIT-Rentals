@@ -6,6 +6,8 @@ export interface Product {
   name: string;
   price: number;
   image: string;
+  type: 'sale' | 'rent';
+  phone: string;
   createdAt?: string;
   updatedAt?: string;
 }

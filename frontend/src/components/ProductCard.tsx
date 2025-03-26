@@ -19,6 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 interface ProductCardProps {
   product: Product;
@@ -29,7 +30,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCardProps) => {
   const navigate = useNavigate();
-  const isForRent = product.price < 500;
+  const isForRent = product.type === 'rent';
 
   // If image is broken, use a placeholder
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -203,22 +204,38 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
             </Button>
           </Stack>
         ) : (
-          <Button 
-            size="small" 
-            variant="contained" 
-            color="primary" 
-            fullWidth
-            startIcon={<ShoppingCartIcon />}
-            onClick={() => navigate(`/products/${product._id}`)}
-            sx={{ 
-              fontWeight: 'bold',
-              py: 1,
-              borderRadius: 2,
-              textTransform: 'none',
-            }}
-          >
-            {isForRent ? 'Rent Now' : 'Buy Now'}
-          </Button>
+          <Stack direction="column" spacing={1} width="100%">
+            <Button 
+              size="medium" 
+              color="primary"
+              variant="contained"
+              startIcon={<ShoppingCartIcon />}
+              onClick={() => navigate(`/products/${product._id}`)}
+              sx={{ 
+                borderRadius: 2,
+                py: 1,
+                fontWeight: 'bold',
+              }}
+            >
+              View Details
+            </Button>
+            
+            <Button 
+              size="medium" 
+              color="secondary"
+              variant="outlined"
+              startIcon={<PhoneIcon />}
+              component="a"
+              href={`tel:+91${product.phone}`}
+              sx={{ 
+                borderRadius: 2,
+                py: 0.75,
+                mt: 1
+              }}
+            >
+              Contact Seller: +91 {product.phone}
+            </Button>
+          </Stack>
         )}
       </CardActions>
     </Card>

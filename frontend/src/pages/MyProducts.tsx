@@ -4,7 +4,6 @@ import {
   Typography, 
   Box, 
   Button, 
-  Grid, 
   CircularProgress,
   Dialog,
   DialogActions,
@@ -14,6 +13,7 @@ import {
   Alert,
   AlertTitle
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import { getProducts, deleteProduct, Product, createProduct, updateProduct } from '../api/product';
@@ -190,18 +190,24 @@ const MyProducts = () => {
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5 }}>
           {products.map((product) => (
-            <Grid item key={product._id} xs={12} sm={6} md={4}>
+            <Box 
+              key={product._id} 
+              sx={{ 
+                width: { xs: '100%', sm: '50%', md: '33.33%' }, 
+                p: 1.5 
+              }}
+            >
               <ProductCard 
                 product={product} 
                 isOwner={true}
                 onEdit={handleEditProduct}
                 onDelete={handleDeleteClick}
               />
-            </Grid>
+            </Box>
           ))}
-        </Grid>
+        </Box>
       )}
 
       {/* Add/Edit Product Form Dialog */}
@@ -214,6 +220,7 @@ const MyProducts = () => {
             initialValues={productToEdit || undefined} 
             onSubmit={handleSubmit}
             isLoading={isSubmitting}
+            title={productToEdit ? 'Edit Product' : 'Add New Product'}
           />
         </DialogContent>
         <DialogActions>

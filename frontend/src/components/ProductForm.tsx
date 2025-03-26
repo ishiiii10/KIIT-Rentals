@@ -16,7 +16,15 @@ import {
   Stack,
   Slider,
   Tooltip,
-  IconButton
+  IconButton,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  useTheme,
+  useMediaQuery,
+  alpha,
+  Chip
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -24,17 +32,28 @@ import { Product } from '../api/product';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import InfoIcon from '@mui/icons-material/Info';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import SaveIcon from '@mui/icons-material/Save';
+import StoreIcon from '@mui/icons-material/Store';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import ImageIcon from '@mui/icons-material/Image';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 interface ProductFormProps {
   initialValues?: Product;
   onSubmit: (values: Product) => void;
   isLoading?: boolean;
+  title?: string;
 }
 
 const defaultProduct = {
   name: '',
   price: 0,
   image: '',
+  type: 'sale' as 'sale' | 'rent',
+  phone: ''
 };
 
 const validationSchema = Yup.object({
@@ -45,317 +64,542 @@ const validationSchema = Yup.object({
   image: Yup.string()
     .required('Image URL is required')
     .url('Must be a valid URL'),
+  type: Yup.string().oneOf(['sale', 'rent'], 'Type must be either sale or rent').required('Listing type is required'),
+  phone: Yup.string()
+    .required('Phone number is required')
+    .matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number')
 });
 
-const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = false }: ProductFormProps) => {
-  const [product, setProduct] = useState<Product>(initialValues);
-
-  useEffect(() => {
-    setProduct(initialValues);
-  }, [initialValues]);
-
-  const isNewProduct = !product._id;
+const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = false, title }: ProductFormProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isNewProduct = !initialValues._id;
 
   return (
-    <Formik
-      initialValues={product}
-      validationSchema={validationSchema}
-      enableReinitialize
-      onSubmit={(values) => {
-        onSubmit(values);
+    <Paper
+      elevation={0}
+      sx={{
+        borderRadius: 4,
+        boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
+        border: '1px solid rgba(0, 0, 0, 0.05)',
+        overflow: 'hidden',
+        position: 'relative',
       }}
     >
-      {({ errors, touched, values, handleChange, handleBlur, setFieldValue }) => (
-        <Form>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Box 
-                sx={{ 
-                  p: 3, 
-                  height: '100%',
-                  display: 'flex', 
-                  flexDirection: 'column'
-                }}
-              >
-                <Typography 
-                  variant="h5" 
-                  gutterBottom 
-                  sx={{ 
-                    fontWeight: 'bold', 
-                    color: 'primary.main',
-                    mb: 3
-                  }}
-                >
-                  {product._id ? 'Update Product' : 'Add New Product'}
-                </Typography>
-                
-                <TextField
-                  fullWidth
-                  id="name"
-                  name="name"
-                  label="Product Name"
-                  placeholder="Enter a descriptive title"
-                  value={values.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.name && Boolean(errors.name)}
-                  helperText={touched.name && errors.name}
-                  margin="normal"
-                  sx={{ 
-                    mb: 2,
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                    }
-                  }}
-                />
-                
-                <FormControl 
-                  fullWidth 
-                  margin="normal" 
-                  error={touched.price && Boolean(errors.price)}
-                  sx={{ mb: 2 }}
-                >
-                  <InputLabel htmlFor="price">Price (₹)</InputLabel>
-                  <OutlinedInput
-                    id="price"
-                    name="price"
-                    type="number"
-                    value={values.price}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    startAdornment={<InputAdornment position="start">₹</InputAdornment>}
-                    label="Price (₹)"
-                    sx={{ borderRadius: 2 }}
-                  />
-                  <FormHelperText>
-                    {touched.price && errors.price ? errors.price : 
-                      <Stack direction="row" alignItems="center" spacing={0.5}>
-                        <InfoOutlinedIcon sx={{ fontSize: 16, color: 'info.main' }} />
-                        <Typography variant="caption">
-                          {values.price < 500 ? 'This will be listed as "For Rent"' : 'This will be listed as "For Sale"'}
-                        </Typography>
-                      </Stack>
-                    }
-                  </FormHelperText>
-                </FormControl>
-                
-                <Box sx={{ mb: 2 }}>
+      {/* Background decorative elements */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: -100,
+          right: -100,
+          width: 200,
+          height: 200,
+          borderRadius: '50%',
+          background: `${alpha(theme.palette.primary.main, 0.05)}`,
+          zIndex: 0,
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: -80,
+          left: -80,
+          width: 150,
+          height: 150,
+          borderRadius: '50%',
+          background: `${alpha(theme.palette.secondary.main, 0.05)}`,
+          zIndex: 0,
+        }}
+      />
+
+      {/* Header */}
+      <Box 
+        sx={{ 
+          p: { xs: 3, md: 4 }, 
+          textAlign: 'center',
+          background: `linear-gradient(145deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.main, 0.02)} 100%)`,
+          borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+          position: 'relative',
+          zIndex: 1
+        }}
+      >
+        <Box 
+          sx={{ 
+            width: 60, 
+            height: 60, 
+            borderRadius: '50%', 
+            backgroundColor: alpha(theme.palette.primary.main, 0.1),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto',
+            mb: 2
+          }}
+        >
+          {isNewProduct ? 
+            <StoreIcon fontSize="large" color="primary" /> : 
+            <LocalOfferIcon fontSize="large" color="primary" />
+          }
+        </Box>
+        <Typography 
+          variant={isMobile ? "h5" : "h4"} 
+          component="h1" 
+          fontWeight="bold" 
+          color="primary.main"
+          gutterBottom
+        >
+          {title || (isNewProduct ? 'Add New Listing' : 'Update Listing')}
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
+          {isNewProduct 
+            ? 'Create a new listing to sell or rent your item to other students.' 
+            : 'Update your listing details to keep your information current.'}
+        </Typography>
+      </Box>
+
+      {/* Form */}
+      <Box sx={{ p: { xs: 3, md: 4 }, position: 'relative', zIndex: 1 }}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={async (values) => {
+            try {
+              await onSubmit(values);
+            } catch (error) {
+              console.error('Error submitting form:', error);
+            }
+          }}
+          enableReinitialize
+        >
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => (
+            <Box component="form" onSubmit={handleSubmit} noValidate>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -2 }}>
+                {/* Left Column */}
+                <Box sx={{ width: '100%', px: 2, mb: 4, flexBasis: { xs: '100%', md: '50%' } }}>
                   <Typography 
-                    gutterBottom 
-                    color="text.secondary" 
+                    variant="h6" 
+                    component="h2" 
+                    color="text.primary" 
+                    fontWeight="bold"
                     sx={{ 
+                      mb: 3, 
                       display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between' 
+                      alignItems: 'center',
+                      '&::before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 4,
+                        height: 24,
+                        backgroundColor: 'primary.main',
+                        marginRight: 1.5,
+                        borderRadius: 1
+                      }
                     }}
                   >
-                    <span>Listing Type:</span>
-                    <Typography component="span" fontWeight="bold" color={values.price < 500 ? 'info.main' : 'success.main'}>
-                      {values.price < 500 ? 'For Rent' : 'For Sale'}
-                    </Typography>
+                    Item Details
                   </Typography>
-                  <Slider
-                    value={values.price < 500 ? 0 : 1}
-                    onChange={(_, newValue) => {
-                      setFieldValue('price', newValue === 0 ? 250 : 1000);
-                    }}
-                    step={1}
-                    marks={[
-                      { value: 0, label: 'Rent' },
-                      { value: 1, label: 'Sale' },
-                    ]}
-                    min={0}
-                    max={1}
-                    sx={{ 
-                      color: values.price < 500 ? 'info.main' : 'success.main',
-                      '& .MuiSlider-mark': {
-                        height: 8,
-                        width: 8,
-                        borderRadius: '50%',
-                      },
-                    }}
-                  />
-                </Box>
-                
-                <TextField
-                  fullWidth
-                  id="image"
-                  name="image"
-                  label="Image URL"
-                  placeholder="Paste a direct image URL"
-                  value={values.image}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.image && Boolean(errors.image)}
-                  helperText={
-                    (touched.image && errors.image) || 
-                    "Paste a direct URL to an image (JPG, PNG, etc.)"
-                  }
-                  margin="normal"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Tooltip title="Add image URL">
-                          <IconButton edge="end">
-                            <AddPhotoAlternateIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ 
-                    mb: 2,
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                    }
-                  }}
-                />
-              </Box>
-            </Grid>
-            
-            <Grid item xs={12} md={6}>
-              <Box 
-                sx={{ 
-                  p: 3, 
-                  height: '100%',
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: 'rgba(0,0,0,0.02)',
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="subtitle1" gutterBottom color="text.secondary" fontWeight="medium">
-                  Product Preview
-                </Typography>
-                
-                {values.image ? (
-                  <Box
-                    sx={{
-                      width: '100%',
-                      maxHeight: 300,
-                      overflow: 'hidden',
-                      borderRadius: 2,
-                      position: 'relative',
-                      mb: 2,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src={values.image}
-                      alt="Product Preview"
-                      sx={{
-                        width: '100%',
-                        objectFit: 'contain',
-                        maxHeight: 300,
+
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="name"
+                      name="name"
+                      label="Product Name"
+                      placeholder="Enter a descriptive title"
+                      value={values.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.name && Boolean(errors.name)}
+                      helperText={touched.name && errors.name}
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <ShoppingBagIcon color="action" />
+                          </InputAdornment>
+                        ),
                       }}
-                      onError={() => {
-                        setFieldValue('image', '');
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        }
                       }}
                     />
                   </Box>
-                ) : (
-                  <Paper
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '100%',
-                      height: 250,
-                      borderRadius: 2,
-                      border: '2px dashed rgba(108, 99, 255, 0.3)',
-                      backgroundColor: 'rgba(108, 99, 255, 0.03)',
-                      mb: 2,
-                    }}
-                  >
-                    <PhotoCameraIcon 
+                  
+                  <Box sx={{ mb: 3 }}>
+                    <FormControl 
+                      fullWidth 
+                      error={touched.price && Boolean(errors.price)}
+                      variant="outlined"
+                      margin="normal"
+                    >
+                      <InputLabel htmlFor="price">Price (₹)</InputLabel>
+                      <OutlinedInput
+                        id="price"
+                        name="price"
+                        type="number"
+                        value={values.price}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+                        placeholder="0.00"
+                        label="Price (₹)"
+                        inputProps={{ min: 0, step: 0.01 }}
+                        sx={{ borderRadius: 2 }}
+                      />
+                      {touched.price && errors.price && (
+                        <FormHelperText>{errors.price}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  
+                  <Box sx={{ mb: 3 }}>
+                    <FormControl 
+                      component="fieldset" 
+                      fullWidth
+                      error={touched.type && Boolean(errors.type)}
                       sx={{ 
-                        fontSize: 60, 
-                        color: 'primary.main',
-                        opacity: 0.5,
-                        mb: 2
+                        p: 2, 
+                        border: `1px solid ${touched.type && errors.type ? theme.palette.error.main : alpha(theme.palette.divider, 0.5)}`,
+                        borderRadius: 2,
+                        '&:hover': {
+                          borderColor: touched.type && errors.type ? theme.palette.error.main : theme.palette.primary.main,
+                        }
+                      }}
+                    >
+                      <FormLabel 
+                        component="legend"
+                        sx={{ 
+                          px: 1, 
+                          backgroundColor: 'background.paper',
+                          fontWeight: 'medium'
+                        }}
+                      >
+                        Listing Type
+                      </FormLabel>
+                      <RadioGroup
+                        row
+                        name="type"
+                        value={values.type}
+                        onChange={handleChange}
+                        sx={{ mt: 1 }}
+                      >
+                        <FormControlLabel 
+                          value="sale" 
+                          control={<Radio color="success" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <LocalOfferIcon color="success" fontSize="small" />
+                              <Typography fontWeight={values.type === 'sale' ? 'bold' : 'normal'}>
+                                For Sale
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            mr: 4,
+                            backgroundColor: values.type === 'sale' ? alpha(theme.palette.success.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                        <FormControlLabel 
+                          value="rent" 
+                          control={<Radio color="info" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <AccessTimeIcon color="info" fontSize="small" />
+                              <Typography fontWeight={values.type === 'rent' ? 'bold' : 'normal'}>
+                                For Rent (per day)
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            backgroundColor: values.type === 'rent' ? alpha(theme.palette.info.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                      </RadioGroup>
+                      {touched.type && errors.type && (
+                        <FormHelperText>{errors.type}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="phone"
+                      name="phone"
+                      label="Contact Phone Number"
+                      placeholder="Enter your 10-digit phone number"
+                      value={values.phone}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.phone && Boolean(errors.phone)}
+                      helperText={touched.phone && errors.phone}
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PhoneIcon color="action" />
+                            +91
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        }
                       }}
                     />
-                    <Typography variant="body2" color="text.secondary" align="center">
-                      Add an image URL to see a preview
-                    </Typography>
-                  </Paper>
-                )}
+                  </Box>
+                </Box>
                 
-                <Box sx={{ width: '100%', px: 2 }}>
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: 2,
-                      mb: 3,
-                      border: '1px solid rgba(108, 99, 255, 0.2)',
-                      borderRadius: 2,
-                      backgroundColor: 'white',
+                {/* Right Column */}
+                <Box sx={{ width: '100%', px: 2, mb: 4, flexBasis: { xs: '100%', md: '50%' } }}>
+                  <Typography 
+                    variant="h6" 
+                    component="h2" 
+                    color="text.primary" 
+                    fontWeight="bold"
+                    sx={{ 
+                      mb: 3, 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      '&::before': {
+                        content: '""',
+                        display: 'inline-block',
+                        width: 4,
+                        height: 24,
+                        backgroundColor: 'secondary.main',
+                        marginRight: 1.5,
+                        borderRadius: 1
+                      }
                     }}
                   >
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="body2" color="text.secondary">
-                        Product Name:
-                      </Typography>
-                      <Typography variant="body1" fontWeight="bold" noWrap sx={{ maxWidth: 200 }}>
-                        {values.name || 'Not specified'}
-                      </Typography>
-                    </Stack>
-                    <Divider sx={{ my: 1.5 }} />
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="body2" color="text.secondary">
-                        Price:
-                      </Typography>
-                      <Typography 
-                        variant="body1" 
-                        fontWeight="bold" 
-                        color={values.price < 500 ? 'info.main' : 'success.main'}
-                      >
-                        ₹{values.price || 0} 
-                        <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
-                          {values.price < 500 ? '/ day' : ''}
-                        </Typography>
-                      </Typography>
-                    </Stack>
-                    <Divider sx={{ my: 1.5 }} />
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Typography variant="body2" color="text.secondary">
-                        Listing Type:
-                      </Typography>
-                      <Typography 
-                        variant="body1" 
-                        fontWeight="bold"
-                        color={values.price < 500 ? 'info.main' : 'success.main'}
-                      >
-                        {values.price < 500 ? 'For Rent' : 'For Sale'}
-                      </Typography>
-                    </Stack>
-                  </Paper>
+                    Image Preview
+                  </Typography>
                   
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="image"
+                      name="image"
+                      label="Image URL"
+                      placeholder="Paste a direct image URL"
+                      value={values.image}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.image && Boolean(errors.image)}
+                      helperText={
+                        (touched.image && errors.image) || 
+                        "Paste a direct URL to your product image"
+                      }
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <ImageIcon color="action" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <Tooltip title="Use a direct image URL. You can upload your image to Imgur or similar services and paste the direct link here.">
+                              <IconButton edge="end">
+                                <InfoIcon fontSize="small" color="action" />
+                              </IconButton>
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        }
+                      }}
+                    />
+                  </Box>
+                  
+                  <Box sx={{ mb: 3, mt: 4 }}>
+                    {values.image ? (
+                      <Box
+                        sx={{
+                          border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                          borderRadius: 2,
+                          p: 1,
+                          backgroundColor: 'background.paper',
+                          boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
+                        }}
+                      >
+                        <Box
+                          component="img"
+                          src={values.image}
+                          alt="Product preview"
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                            e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Invalid+Image+URL';
+                          }}
+                          sx={{
+                            width: '100%',
+                            height: 220,
+                            objectFit: 'contain',
+                            borderRadius: 1,
+                            backgroundColor: alpha(theme.palette.divider, 0.05),
+                          }}
+                        />
+                        <Box sx={{ mt: 1, textAlign: 'center' }}>
+                          <Typography variant="caption" color="text.secondary">
+                            Image Preview
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box
+                        sx={{
+                          border: `2px dashed ${alpha(theme.palette.divider, 0.5)}`,
+                          borderRadius: 2,
+                          p: 4,
+                          backgroundColor: alpha(theme.palette.divider, 0.03),
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          height: 220,
+                        }}
+                      >
+                        <PhotoCameraIcon sx={{ fontSize: 48, color: alpha(theme.palette.text.secondary, 0.5), mb: 2 }} />
+                        <Typography variant="body1" color="text.secondary" align="center">
+                          Add an image URL to see preview
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                  
+                  {/* Item Card Preview (simplified) */}
+                  {values.name && values.price > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="body2" color="text.secondary" gutterBottom sx={{ fontWeight: 'medium' }}>
+                        Listing Preview:
+                      </Typography>
+                      <Paper
+                        elevation={0}
+                        sx={{ 
+                          p: 2, 
+                          borderRadius: 2, 
+                          border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2
+                        }}
+                      >
+                        <Box 
+                          sx={{ 
+                            width: 60, 
+                            height: 60, 
+                            borderRadius: 1, 
+                            overflow: 'hidden',
+                            flexShrink: 0, 
+                            backgroundColor: alpha(theme.palette.divider, 0.1)
+                          }}
+                        >
+                          {values.image ? (
+                            <Box 
+                              component="img" 
+                              src={values.image} 
+                              alt={values.name}
+                              sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <Box 
+                              sx={{ 
+                                width: '100%', 
+                                height: '100%', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center' 
+                              }}
+                            >
+                              <ImageIcon color="disabled" />
+                            </Box>
+                          )}
+                        </Box>
+                        <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
+                          <Typography 
+                            variant="subtitle2" 
+                            noWrap 
+                            sx={{ 
+                              fontWeight: 'bold',
+                              color: 'text.primary'
+                            }}
+                          >
+                            {values.name}
+                          </Typography>
+                          <Stack direction="row" alignItems="center" spacing={1}>
+                            <Typography 
+                              variant="body2" 
+                              color="primary" 
+                              sx={{ fontWeight: 'bold' }}
+                            >
+                              ₹{values.price}
+                            </Typography>
+                            {values.type === 'rent' && (
+                              <Typography variant="caption" color="text.secondary">
+                                / day
+                              </Typography>
+                            )}
+                          </Stack>
+                        </Box>
+                        <Chip
+                          size="small"
+                          label={values.type === 'rent' ? 'For Rent' : 'For Sale'}
+                          color={values.type === 'rent' ? 'info' : 'success'}
+                          sx={{ flexShrink: 0 }}
+                        />
+                      </Paper>
+                    </Box>
+                  )}
+                </Box>
+                
+                {/* Submit Button - Full Width */}
+                <Box sx={{ width: '100%', px: 2, mt: 2 }}>
+                  <Divider sx={{ mb: 4 }} />
                   <Button
                     type="submit"
                     variant="contained"
                     color="primary"
-                    fullWidth
                     size="large"
-                    disabled={isLoading}
-                    sx={{ py: 1.5, borderRadius: 2 }}
+                    fullWidth
+                    disabled={isLoading || !isValid}
+                    startIcon={isLoading ? undefined : <SaveIcon />}
+                    sx={{
+                      py: 1.5,
+                      px: 3,
+                      fontWeight: 'bold',
+                      borderRadius: 2,
+                      boxShadow: `0 8px 16px ${alpha(theme.palette.primary.main, 0.2)}`,
+                      '&:hover': {
+                        boxShadow: `0 12px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+                        transform: 'translateY(-2px)',
+                      },
+                      transition: 'all 0.2s ease',
+                    }}
                   >
-                    {isLoading ? 
-                      <CircularProgress size={24} /> : 
-                      isNewProduct ? 'Add Product' : 'Update Product'
-                    }
+                    {isLoading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : isNewProduct ? (
+                      'Create Listing'
+                    ) : (
+                      'Update Listing'
+                    )}
                   </Button>
                 </Box>
               </Box>
-            </Grid>
-          </Grid>
-        </Form>
-      )}
-    </Formik>
+            </Box>
+          )}
+        </Formik>
+      </Box>
+    </Paper>
   );
 };
 

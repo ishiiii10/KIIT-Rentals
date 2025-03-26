@@ -37,9 +37,16 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        // Get 4 random products as featured products
-        const shuffled = [...data].sort(() => 0.5 - Math.random());
-        setFeaturedProducts(shuffled.slice(0, 4));
+        
+        // Get 2 random products for sale and 2 for rent
+        const saleProducts = data.filter(product => product.type === 'sale');
+        const rentProducts = data.filter(product => product.type === 'rent');
+        
+        const shuffledSale = [...saleProducts].sort(() => 0.5 - Math.random()).slice(0, 2);
+        const shuffledRent = [...rentProducts].sort(() => 0.5 - Math.random()).slice(0, 2);
+        
+        // Combine both types of featured products
+        setFeaturedProducts([...shuffledSale, ...shuffledRent]);
       } catch (err) {
         console.error(err);
       } finally {

@@ -13,12 +13,16 @@ import {
   Button,
   Skeleton,
   Stack,
-  useTheme
+  useTheme,
+  ToggleButtonGroup,
+  ToggleButton
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import SortIcon from '@mui/icons-material/Sort';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
@@ -29,6 +33,7 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [listingType, setListingType] = useState<'all' | 'sale' | 'rent'>('all');
   const theme = useTheme();
 
   useEffect(() => {
@@ -50,20 +55,35 @@ const Products = () => {
   }, []);
 
   useEffect(() => {
-    if (searchTerm.trim() === '') {
-      setFilteredProducts(products);
-      return;
+    let filtered = [...products];
+    
+    // Filter by search term
+    if (searchTerm.trim() !== '') {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    
+    // Filter by listing type
+    if (listingType !== 'all') {
+      filtered = filtered.filter((product) => product.type === listingType);
+    }
+    
     setFilteredProducts(filtered);
-  }, [searchTerm, products]);
+  }, [searchTerm, products, listingType]);
+
+  const handleListingTypeChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newListingType: 'all' | 'sale' | 'rent' | null
+  ) => {
+    if (newListingType !== null) {
+      setListingType(newListingType);
+    }
+  };
 
   const renderSkeletons = () => {
     return Array(8).fill(null).map((_, index) => (
-      <Grid item xs={12} sm={6} md={4} lg={3} key={`skeleton-${index}`}>
+      <Grid item xs={12} sm={6} md={4} lg={3} key={`skeleton-${index}`} component="div">
         <Paper sx={{ borderRadius: 2, overflow: 'hidden', height: '100%' }}>
           <Skeleton variant="rectangular" width="100%" height={200} />
           <Box sx={{ p: 2 }}>
@@ -150,7 +170,7 @@ const Products = () => {
             }}
           >
             <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={6} component="div">
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -183,185 +203,161 @@ const Products = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={6} md={3}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<FilterListIcon />}
-                  sx={{ 
-                    py: 1.5, 
-                    borderRadius: 2,
-                    borderColor: 'rgba(88, 128, 97, 0.3)',
-                  }}
-                >
-                  Filter
-                </Button>
-              </Grid>
-              <Grid item xs={6} md={3}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<SortIcon />}
-                  sx={{ 
-                    py: 1.5, 
-                    borderRadius: 2,
-                    borderColor: 'rgba(88, 128, 97, 0.3)',
-                  }}
-                >
-                  Sort by: Newest
-                </Button>
+              
+              <Grid item xs={12} md={6} component="div">
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                  <ToggleButtonGroup
+                    value={listingType}
+                    exclusive
+                    onChange={handleListingTypeChange}
+                    aria-label="listing type"
+                    sx={{ 
+                      height: '100%',
+                      flex: 1,
+                      '& .MuiToggleButtonGroup-grouped': {
+                        borderRadius: 2,
+                        mx: 0.5,
+                        border: '1px solid rgba(88, 128, 97, 0.2) !important',
+                      },
+                    }}
+                  >
+                    <ToggleButton 
+                      value="all" 
+                      aria-label="all listings"
+                      sx={{ 
+                        flex: 1,
+                        py: 1,
+                        color: listingType === 'all' ? 'primary.main' : 'text.secondary',
+                        fontWeight: listingType === 'all' ? 'bold' : 'normal',
+                        bgcolor: listingType === 'all' ? 'rgba(88, 128, 97, 0.1)' : 'transparent',
+                      }}
+                    >
+                      All
+                    </ToggleButton>
+                    <ToggleButton 
+                      value="sale" 
+                      aria-label="sale listings"
+                      sx={{ 
+                        flex: 1,
+                        py: 1,
+                        color: listingType === 'sale' ? 'success.main' : 'text.secondary',
+                        fontWeight: listingType === 'sale' ? 'bold' : 'normal',
+                        bgcolor: listingType === 'sale' ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
+                      }}
+                    >
+                      <ShoppingCartIcon sx={{ mr: 0.5, fontSize: '0.9rem' }} />
+                      Buy
+                    </ToggleButton>
+                    <ToggleButton 
+                      value="rent" 
+                      aria-label="rent listings"
+                      sx={{ 
+                        flex: 1,
+                        py: 1,
+                        color: listingType === 'rent' ? 'info.main' : 'text.secondary',
+                        fontWeight: listingType === 'rent' ? 'bold' : 'normal',
+                        bgcolor: listingType === 'rent' ? 'rgba(3, 169, 244, 0.1)' : 'transparent',
+                      }}
+                    >
+                      <AccessTimeIcon sx={{ mr: 0.5, fontSize: '0.9rem' }} />
+                      Rent
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                  
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<SortIcon />}
+                    sx={{ 
+                      py: 1.5, 
+                      px: 2,
+                      borderRadius: 2,
+                      borderColor: 'rgba(88, 128, 97, 0.3)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    Sort
+                  </Button>
+                </Box>
               </Grid>
             </Grid>
           </Paper>
         </Box>
 
-        {/* Categories */}
-        <Box sx={{ mb: 4 }}>
-          <Stack 
-            direction="row" 
-            spacing={1} 
+        {/* Results Section */}
+        <Box sx={{ mt: 4 }}>
+          {/* Filter information */}
+          <Box 
             sx={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center',
+              mb: 3,
               flexWrap: 'wrap',
-              gap: 1,
-              '& > *': {
-                mb: 1
-              }
+              gap: 1
             }}
           >
-            <Chip 
-              icon={<LocalOfferIcon />} 
-              label="All Products" 
-              color="primary" 
-              variant="filled"
-              sx={{ 
-                fontWeight: 'bold', 
-                py: 2.5, 
-                px: 1,
-                borderRadius: 2
-              }} 
-            />
-            <Chip 
-              label="Electronics" 
-              variant="outlined" 
-              sx={{ 
-                py: 2.5, 
-                px: 1, 
-                borderRadius: 2,
-                borderColor: 'rgba(88, 128, 97, 0.3)',
-                '&:hover': {
-                  backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                }
-              }} 
-            />
-            <Chip 
-              label="Books" 
-              variant="outlined" 
-              sx={{ 
-                py: 2.5, 
-                px: 1, 
-                borderRadius: 2,
-                borderColor: 'rgba(88, 128, 97, 0.3)',
-                '&:hover': {
-                  backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                }
-              }} 
-            />
-            <Chip 
-              label="Furniture" 
-              variant="outlined" 
-              sx={{ 
-                py: 2.5, 
-                px: 1, 
-                borderRadius: 2,
-                borderColor: 'rgba(88, 128, 97, 0.3)',
-                '&:hover': {
-                  backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                }
-              }} 
-            />
-            <Chip 
-              label="Clothing" 
-              variant="outlined" 
-              sx={{ 
-                py: 2.5, 
-                px: 1, 
-                borderRadius: 2,
-                borderColor: 'rgba(88, 128, 97, 0.3)',
-                '&:hover': {
-                  backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                }
-              }} 
-            />
-            <Chip 
-              label="Sports" 
-              variant="outlined" 
-              sx={{ 
-                py: 2.5, 
-                px: 1, 
-                borderRadius: 2,
-                borderColor: 'rgba(88, 128, 97, 0.3)',
-                '&:hover': {
-                  backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                }
-              }} 
-            />
-          </Stack>
-        </Box>
+            <Typography 
+              variant="subtitle1" 
+              sx={{ fontWeight: 'medium', color: 'text.secondary' }}
+            >
+              {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} 
+              {listingType !== 'all' && ` for ${listingType === 'sale' ? 'sale' : 'rent'}`}
+            </Typography>
+            
+            {searchTerm && (
+              <Chip 
+                label={`Search: "${searchTerm}"`}
+                onDelete={() => setSearchTerm('')}
+                color="primary"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          </Box>
 
-        {/* Results Count */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h6" color="text.secondary">
-            {loading ? 'Loading products...' : 
-              filteredProducts.length === 0 ? 'No products found' : 
-              `Showing ${filteredProducts.length} ${filteredProducts.length === 1 ? 'product' : 'products'}`
-            }
-          </Typography>
-        </Box>
-
-        {/* Products Grid */}
-        <Grid container spacing={{ xs: 2, md: 3 }}>
-          {loading ? (
-            renderSkeletons()
-          ) : filteredProducts.length === 0 ? (
-            <Grid item xs={12}>
-              <Paper
-                sx={{
-                  py: { xs: 6, md: 8 },
-                  px: { xs: 2, sm: 4 },
-                  textAlign: 'center',
-                  borderRadius: 2,
-                  backgroundColor: 'rgba(88, 128, 97, 0.03)',
-                  border: '1px dashed rgba(88, 128, 97, 0.2)',
-                }}
-              >
-                <Box sx={{ mb: 3 }}>
-                  <SearchIcon sx={{ fontSize: 60, color: 'primary.main', opacity: 0.5 }} />
-                </Box>
-                <Typography variant="h5" gutterBottom fontWeight="bold">
-                  No products found
-                </Typography>
-                <Typography color="text.secondary" sx={{ mb: 3, maxWidth: 500, mx: 'auto' }}>
-                  We couldn't find any products matching your search criteria. Try adjusting your filters or search term.
-                </Typography>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => setSearchTerm('')}
+          {/* Products grid */}
+          <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
+            {loading ? (
+              renderSkeletons()
+            ) : filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={product._id} component="div">
+                  <ProductCard product={product} />
+                </Grid>
+              ))
+            ) : (
+              <Grid item xs={12} component="div">
+                <Paper
+                  sx={{
+                    p: 4,
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    backgroundColor: 'rgba(88, 128, 97, 0.05)',
+                    border: '1px solid rgba(88, 128, 97, 0.1)',
+                  }}
                 >
-                  Clear Search
-                </Button>
-              </Paper>
-            </Grid>
-          ) : (
-            filteredProducts.map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-                <ProductCard product={product} />
+                  <Typography variant="h6" gutterBottom color="text.secondary" sx={{ mb: 2 }}>
+                    No products found
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    Try adjusting your search or filters to find what you're looking for.
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setListingType('all');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
+                </Paper>
               </Grid>
-            ))
-          )}
-        </Grid>
+            )}
+          </Grid>
+        </Box>
       </Container>
     </Box>
   );
