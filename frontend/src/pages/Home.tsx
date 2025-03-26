@@ -154,7 +154,26 @@ const Home = () => {
                   direction={{ xs: 'column', sm: 'row' }}
                   spacing={2}
                   justifyContent={{ xs: 'center', md: 'flex-start' }}
+                  sx={{ mb: 4 }}
                 >
+                  <Button 
+                    variant="contained" 
+                    component={RouterLink} 
+                    to="/register"
+                    size="large"
+                    sx={{ 
+                      background: 'white',
+                      color: theme.palette.primary.main,
+                      fontWeight: 'bold',
+                      py: 1.5,
+                      px: 3,
+                      '&:hover': {
+                        background: '#f5f5f5',
+                      }
+                    }}
+                  >
+                    Get Started Now
+                  </Button>
                   <Button 
                     variant="contained" 
                     component={RouterLink} 
@@ -216,6 +235,118 @@ const Home = () => {
               />
             </Grid>
           </Grid>
+        </Container>
+      </Box>
+
+      {/* Featured Products Section */}
+      <Box sx={{ 
+        bgcolor: 'rgba(88, 128, 97, 0.05)', 
+        py: { xs: 5, md: 10 },
+        borderTop: '1px solid rgba(88, 128, 97, 0.1)',
+        borderBottom: '1px solid rgba(88, 128, 97, 0.1)',
+        position: 'relative',
+      }}>
+        {/* Decorative elements */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 100,
+            right: -50,
+            width: 150,
+            height: 150,
+            borderRadius: '50%',
+            background: 'rgba(231, 181, 236, 0.1)',
+            zIndex: 0,
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 80,
+            left: -80,
+            width: 200,
+            height: 200,
+            borderRadius: '50%',
+            background: 'rgba(88, 128, 97, 0.1)',
+            zIndex: 0,
+          }}
+        />
+        
+        <Container sx={{ position: 'relative', zIndex: 1 }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              gutterBottom 
+              fontWeight="bold" 
+              color="primary"
+              sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
+            >
+              Featured Items
+            </Typography>
+            <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              sx={{ 
+                mb: 2, 
+                maxWidth: 700, 
+                mx: 'auto',
+                fontSize: { xs: '1rem', md: '1.25rem' },
+              }}
+            >
+              Discover what other students are offering right now
+            </Typography>
+          </Box>
+
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
+              <CircularProgress color="primary" size={60} thickness={4} />
+            </Box>
+          ) : (
+            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
+              {featuredProducts.map((product) => (
+                <Grid item key={product._id} xs={12} sm={6} md={3}>
+                  <Box 
+                    sx={{ 
+                      transform: 'translateY(0)',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      height: '100%',
+                      '&:hover': {
+                        transform: 'translateY(-10px)',
+                      }
+                    }}
+                  >
+                    <ProductCard product={product} />
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+
+          <Box sx={{ textAlign: 'center', mt: { xs: 5, md: 8 } }}>
+            <Button 
+              variant="contained" 
+              component={RouterLink} 
+              to="/products"
+              size="large"
+              startIcon={<ShoppingCartIcon />}
+              sx={{ 
+                py: 1.5, 
+                px: 4, 
+                fontWeight: 'bold',
+                borderRadius: 2,
+                boxShadow: '0 4px 10px rgba(88, 128, 97, 0.25)',
+                '&:hover': {
+                  boxShadow: '0 6px 15px rgba(88, 128, 97, 0.3)',
+                  transform: 'translateY(-3px)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
+              View All Products
+            </Button>
+          </Box>
         </Container>
       </Box>
 
@@ -324,52 +455,6 @@ const Home = () => {
           ))}
         </Grid>
       </Container>
-
-      {/* Featured Products Section */}
-      <Box sx={{ bgcolor: 'rgba(88, 128, 97, 0.05)', py: { xs: 5, md: 10 } }}>
-        <Container>
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
-            <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary"
-              sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}>
-              Featured Items
-            </Typography>
-            <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
-            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-              Discover what other students are offering right now
-            </Typography>
-          </Box>
-
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Grid container spacing={4}>
-              {featuredProducts.map((product) => (
-                <Grid item key={product._id} xs={12} sm={6} md={3}>
-                  <ProductCard product={product} />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-
-          <Box sx={{ textAlign: 'center', mt: 6 }}>
-            <Button 
-              variant="contained" 
-              component={RouterLink} 
-              to="/products"
-              size="large"
-              sx={{ 
-                py: 1.5, 
-                px: 4, 
-                fontWeight: 'bold',
-              }}
-            >
-              View All Products
-            </Button>
-          </Box>
-        </Container>
-      </Box>
 
       {/* How It Works Section */}
       <Container sx={{ py: { xs: 5, md: 10 } }}>
@@ -542,8 +627,8 @@ const Home = () => {
           </Button>
         </Box>
       </Container>
-
-      {/* CTA Banner */}
+      
+      {/* Add back the original CTA Banner */}
       <Box 
         sx={{ 
           background: 'linear-gradient(45deg, rgba(88, 128, 97, 0.9) 0%, rgba(231, 181, 236, 0.9) 100%)',

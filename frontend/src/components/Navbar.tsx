@@ -275,7 +275,7 @@ const Navbar = () => {
               sx={{ 
                 flexGrow: 1, 
                 display: { xs: 'none', md: 'flex' },
-                justifyContent: 'center',
+                justifyContent: 'flex-end',
                 alignItems: 'center',
                 gap: 1
               }}
@@ -358,30 +358,6 @@ const Navbar = () => {
             <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
               {isAuthenticated ? (
                 <>
-                  {/* Add new listing button - desktop */}
-                  <Button
-                    component={Link}
-                    to="/my-products/new"
-                    variant="contained"
-                    startIcon={<AddCircleOutlineIcon />}
-                    sx={{
-                      display: { xs: 'none', sm: 'flex' },
-                      mr: 2,
-                      background: '#588061',
-                      backdropFilter: 'blur(4px)',
-                      color: 'white',
-                      borderRadius: 2,
-                      px: 2,
-                      py: 1,
-                      '&:hover': {
-                        background: '#869F77',
-                      },
-                      fontWeight: 500
-                    }}
-                  >
-                    Add Listing
-                  </Button>
-                  
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0.5, border: '2px solid', borderColor: alpha('#588061', 0.3) }}>
                       <Avatar 
@@ -432,10 +408,6 @@ const Navbar = () => {
                     <MenuItem component={Link} to="/my-products" onClick={handleCloseUserMenu} sx={{ py: 1.5, minHeight: 48 }}>
                       <ShoppingCartIcon sx={{ mr: 2, fontSize: 20 }} color="primary" />
                       <Typography>My Listings</Typography>
-                    </MenuItem>
-                    <MenuItem component={Link} to="/my-products/new" onClick={handleCloseUserMenu} sx={{ py: 1.5, minHeight: 48 }}>
-                      <AddCircleOutlineIcon sx={{ mr: 2, fontSize: 20 }} color="primary" />
-                      <Typography>Add New Listing</Typography>
                     </MenuItem>
                     <Divider sx={{ my: 1 }} />
                     <MenuItem onClick={handleLogout} sx={{ py: 1.5, minHeight: 48 }}>
