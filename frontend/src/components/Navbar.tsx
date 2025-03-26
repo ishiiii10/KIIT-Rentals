@@ -22,13 +22,15 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HomeIcon from '@mui/icons-material/Home';
+import CategoryIcon from '@mui/icons-material/Category';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logout } from '../api/auth';
 
 const pages = [
-  { name: 'Home', path: '/' },
-  { name: 'Products', path: '/products' },
+  { name: 'Home', path: '/', icon: <HomeIcon /> },
+  { name: 'Products', path: '/products', icon: <CategoryIcon /> },
 ];
 
 interface Props {
@@ -212,9 +214,16 @@ const Navbar = () => {
                       }
                     }}
                   >
-                    <Typography textAlign="center" fontWeight={isActive(page.path) ? "600" : "500"} color={isActive(page.path) ? "primary" : "inherit"}>
-                      {page.name}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      {page.icon && (
+                        <Box component="span" sx={{ mr: 1, display: 'flex', color: isActive(page.path) ? "primary.main" : "inherit" }}>
+                          {page.icon}
+                        </Box>
+                      )}
+                      <Typography textAlign="center" fontWeight={isActive(page.path) ? "600" : "500"} color={isActive(page.path) ? "primary" : "inherit"}>
+                        {page.name}
+                      </Typography>
+                    </Box>
                   </MenuItem>
                 ))}
                 {isAuthenticated && (
@@ -286,6 +295,7 @@ const Navbar = () => {
                   component={Link}
                   to={page.path}
                   onClick={handleCloseNavMenu}
+                  startIcon={page.icon}
                   sx={{ 
                     color: 'white', 
                     display: 'flex',
