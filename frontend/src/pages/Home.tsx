@@ -384,21 +384,24 @@ const Home = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={4}>
+        <Grid container spacing={4} justifyContent="center" alignItems="stretch">
+          <Grid item xs={12} sm={6} md={4}>
             <Paper 
-              elevation={0} 
+              elevation={3} 
               sx={{ 
                 height: '100%',
                 p: 4, 
                 textAlign: 'center',
                 borderRadius: 4,
-                border: '2px solid rgba(108, 99, 255, 0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                border: '2px solid rgba(88, 128, 97, 0.1)',
                 transition: 'all 0.3s ease-in-out',
                 '&:hover': {
                   transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(108, 99, 255, 0.1)',
-                  border: '2px solid rgba(108, 99, 255, 0.3)',
+                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
+                  border: '2px solid rgba(88, 128, 97, 0.3)',
                 }
               }}
             >
@@ -423,25 +426,28 @@ const Home = () => {
               <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
                 Sign Up
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
                 Create a free account using your KIIT email address. Verify your student status and set up your profile in minutes.
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Paper 
-              elevation={0} 
+              elevation={3} 
               sx={{ 
                 height: '100%',
                 p: 4, 
                 textAlign: 'center',
                 borderRadius: 4,
-                border: '2px solid rgba(108, 99, 255, 0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                border: '2px solid rgba(88, 128, 97, 0.1)',
                 transition: 'all 0.3s ease-in-out',
                 '&:hover': {
                   transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(108, 99, 255, 0.1)',
-                  border: '2px solid rgba(108, 99, 255, 0.3)',
+                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
+                  border: '2px solid rgba(88, 128, 97, 0.3)',
                 }
               }}
             >
@@ -466,25 +472,28 @@ const Home = () => {
               <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
                 Browse or List
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
                 Look through items available for sale or rent, or list your own items with photos and detailed descriptions.
               </Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} sm={6} md={4}>
             <Paper 
-              elevation={0} 
+              elevation={3} 
               sx={{ 
                 height: '100%',
                 p: 4, 
                 textAlign: 'center',
                 borderRadius: 4,
-                border: '2px solid rgba(108, 99, 255, 0.1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                border: '2px solid rgba(88, 128, 97, 0.1)',
                 transition: 'all 0.3s ease-in-out',
                 '&:hover': {
                   transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(108, 99, 255, 0.1)',
-                  border: '2px solid rgba(108, 99, 255, 0.3)',
+                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
+                  border: '2px solid rgba(88, 128, 97, 0.3)',
                 }
               }}
             >
@@ -509,7 +518,7 @@ const Home = () => {
               <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
                 Connect & Exchange
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
                 Message other students, agree on terms, and meet on campus to complete your transaction safely and easily.
               </Typography>
             </Paper>
