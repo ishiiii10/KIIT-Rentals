@@ -350,283 +350,314 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Benefits Section */}
-      <Container sx={{ py: { xs: 5, md: 10 }, position: 'relative' }}>
-        <Box 
-          sx={{ 
-            position: 'absolute', 
-            width: 200, 
-            height: 200, 
-            backgroundColor: 'rgba(108, 99, 255, 0.05)', 
-            borderRadius: '50%',
-            top: '20%',
-            left: -100,
-            zIndex: -1
-          }} 
-        />
-        <Box 
-          sx={{ 
-            position: 'absolute', 
-            width: 150, 
-            height: 150, 
-            backgroundColor: 'rgba(255, 101, 132, 0.05)', 
-            borderRadius: '50%',
-            bottom: '10%',
-            right: -50,
-            zIndex: -1
-          }} 
-        />
-      
-        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
-          <Typography 
-            variant="h3" 
-            component="h2" 
-            fontWeight="bold" 
-            color="primary"
-            gutterBottom
-            sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
-          >
-            Why Use KIIT Rentals?
-          </Typography>
-          <Typography 
-            variant="h6" 
-            color="text.secondary" 
-            sx={{ 
-              maxWidth: 700, 
-              mx: 'auto', 
-              mb: 2,
-              fontSize: { xs: '1rem', md: '1.25rem' },
-              px: { xs: 2, sm: 0 }
-            }}
-          >
-            A platform created by students, for students, to make campus life easier and more affordable.
-          </Typography>
-        </Box>
-
-        <Grid container spacing={4} justifyContent="center">
-          {benefits.map((benefit, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Card 
-                elevation={2}
-                sx={{ 
-                  height: '100%', 
-                  display: 'flex',
-                  flexDirection: 'column',
-                  textAlign: 'center',
-                  backgroundColor: 'white',
-                  borderRadius: 3,
-                  p: 1,
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-10px)',
-                    boxShadow: '0 10px 20px rgba(88, 128, 97, 0.15)',
-                  }
-                }}
-              >
-                <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexGrow: 1, p: { xs: 2, md: 3 } }}>
-                  <Box 
-                    sx={{ 
-                      mb: 2, 
-                      display: 'flex', 
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: 80,
-                      height: 80,
-                      borderRadius: '50%',
-                      backgroundColor: alpha('#588061', 0.1),
-                      '& .MuiSvgIcon-root': {
-                        fontSize: 40,
-                        color: '#588061'
-                      }
-                    }}
+      {/* Benefits and How It Works Two-Column Layout */}
+      <Box sx={{ 
+        py: { xs: 5, md: 8 },
+        bgcolor: 'rgba(88, 128, 97, 0.02)'
+      }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 5 }}>
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              fontWeight="bold" 
+              color="primary"
+              gutterBottom
+              sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' } }}
+            >
+              Discover the KIIT Rentals Experience
+            </Typography>
+            <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 2 }} />
+          </Box>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: { xs: 4, md: 5 }
+          }}>
+            {/* Benefits Section Column */}
+            <Box sx={{ 
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <Paper elevation={2} sx={{ 
+                p: { xs: 3, md: 4 }, 
+                height: '100%',
+                borderRadius: 3,
+                border: '1px solid rgba(88, 128, 97, 0.1)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Decorative circle */}
+                <Box 
+                  sx={{ 
+                    position: 'absolute', 
+                    width: 120, 
+                    height: 120, 
+                    backgroundColor: 'rgba(108, 99, 255, 0.05)', 
+                    borderRadius: '50%',
+                    top: -30,
+                    right: -30,
+                    zIndex: 0
+                  }} 
+                />
+              
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Typography 
+                    variant="h4" 
+                    component="h3" 
+                    fontWeight="bold" 
+                    color="primary"
+                    gutterBottom
+                    sx={{ fontSize: { xs: '1.5rem', md: '1.8rem' }, mb: 2, textAlign: 'center' }}
                   >
-                    {benefit.icon}
+                    Why Use KIIT Rentals?
+                  </Typography>
+                  <Divider sx={{ mb: 3, mx: 'auto', width: 50, borderColor: theme.palette.primary.main, borderWidth: 2 }} />
+
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2.5 }}>
+                    {benefits.map((benefit, index) => (
+                      <Box 
+                        key={index}
+                        sx={{ 
+                          p: 2, 
+                          borderRadius: 2,
+                          bgcolor: 'rgba(88, 128, 97, 0.03)',
+                          height: '100%',
+                          transition: 'all 0.2s ease-in-out',
+                          '&:hover': {
+                            bgcolor: 'rgba(88, 128, 97, 0.08)',
+                            transform: 'translateY(-5px)'
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                          <Box 
+                            sx={{ 
+                              mr: 1.5, 
+                              display: 'flex', 
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: 40,
+                              height: 40,
+                              borderRadius: '50%',
+                              backgroundColor: alpha('#588061', 0.1),
+                              flexShrink: 0,
+                              '& .MuiSvgIcon-root': {
+                                fontSize: 22,
+                                color: '#588061'
+                              }
+                            }}
+                          >
+                            {benefit.icon}
+                          </Box>
+                          <Typography variant="h6" component="h4" fontWeight="bold" color="#588061"
+                            sx={{ fontSize: { xs: '1rem', md: '1.1rem' } }}>
+                            {benefit.title}
+                          </Typography>
+                        </Box>
+                        <Typography variant="body2" color="text.secondary" sx={{ pl: 0.5 }}>
+                          {benefit.description}
+                        </Typography>
+                      </Box>
+                    ))}
                   </Box>
-                  <Typography variant="h5" component="h3" gutterBottom fontWeight="bold" color="#588061"
-                    sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' }, mb: 2 }}>
-                    {benefit.title}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    {benefit.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+                </Box>
+              </Paper>
+            </Box>
 
-      {/* How It Works Section */}
-      <Container sx={{ py: { xs: 5, md: 10 } }}>
-        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
-          <Typography variant="h3" component="h2" gutterBottom fontWeight="bold" color="primary"
-            sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}>
-            How It Works
-          </Typography>
-          <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-            Get started in three simple steps
-          </Typography>
-        </Box>
+            {/* How It Works Section Column */}
+            <Box sx={{ 
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <Paper elevation={2} sx={{ 
+                p: { xs: 3, md: 4 }, 
+                height: '100%',
+                borderRadius: 3,
+                border: '1px solid rgba(88, 128, 97, 0.1)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Decorative circle */}
+                <Box 
+                  sx={{ 
+                    position: 'absolute', 
+                    width: 120, 
+                    height: 120, 
+                    backgroundColor: 'rgba(231, 181, 236, 0.1)', 
+                    borderRadius: '50%',
+                    bottom: -30,
+                    left: -30,
+                    zIndex: 0
+                  }} 
+                />
+              
+                <Box sx={{ position: 'relative', zIndex: 1 }}>
+                  <Typography 
+                    variant="h4" 
+                    component="h3" 
+                    gutterBottom 
+                    fontWeight="bold" 
+                    color="primary"
+                    sx={{ fontSize: { xs: '1.5rem', md: '1.8rem' }, mb: 2, textAlign: 'center' }}
+                  >
+                    How It Works
+                  </Typography>
+                  <Divider sx={{ mb: 3, mx: 'auto', width: 50, borderColor: theme.palette.primary.main, borderWidth: 2 }} />
 
-        <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-          <Grid item xs={12} sm={6} md={4}>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                height: '100%',
-                p: 4, 
-                textAlign: 'center',
-                borderRadius: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                border: '2px solid rgba(88, 128, 97, 0.1)',
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
-                  border: '2px solid rgba(88, 128, 97, 0.3)',
-                }
-              }}
-            >
-              <Box 
-                sx={{ 
-                  mb: 2, 
-                  color: 'white', 
-                  backgroundColor: theme.palette.primary.main,
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 30,
-                  fontWeight: 'bold',
-                  mx: 'auto'
-                }}
-              >
-                1
+                  <Stack spacing={2.5}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'rgba(88, 128, 97, 0.03)',
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        bgcolor: 'rgba(88, 128, 97, 0.08)',
+                        transform: 'translateX(5px)'
+                      }
+                    }}>
+                      <Box 
+                        sx={{ 
+                          mr: 2, 
+                          color: 'white', 
+                          backgroundColor: theme.palette.primary.main,
+                          width: 30,
+                          height: 30,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          flexShrink: 0,
+                          mt: 0.5
+                        }}
+                      >
+                        1
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" component="h4" gutterBottom fontWeight="bold" color="primary"
+                          sx={{ fontSize: { xs: '1rem', md: '1.1rem' }, mb: 0.5 }}>
+                          Sign Up
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Create a free account using your KIIT email address. Verify your student status and set up your profile in minutes.
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'rgba(88, 128, 97, 0.03)',
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        bgcolor: 'rgba(88, 128, 97, 0.08)',
+                        transform: 'translateX(5px)'
+                      }
+                    }}>
+                      <Box 
+                        sx={{ 
+                          mr: 2, 
+                          color: 'white', 
+                          backgroundColor: theme.palette.primary.main,
+                          width: 30,
+                          height: 30,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          flexShrink: 0,
+                          mt: 0.5
+                        }}
+                      >
+                        2
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" component="h4" gutterBottom fontWeight="bold" color="primary"
+                          sx={{ fontSize: { xs: '1rem', md: '1.1rem' }, mb: 0.5 }}>
+                          Browse or List
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Look through items available for sale or rent, or list your own items with photos and detailed descriptions.
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start',
+                      p: 2,
+                      borderRadius: 2,
+                      bgcolor: 'rgba(88, 128, 97, 0.03)',
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        bgcolor: 'rgba(88, 128, 97, 0.08)',
+                        transform: 'translateX(5px)'
+                      }
+                    }}>
+                      <Box 
+                        sx={{ 
+                          mr: 2, 
+                          color: 'white', 
+                          backgroundColor: theme.palette.primary.main,
+                          width: 30,
+                          height: 30,
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: 16,
+                          fontWeight: 'bold',
+                          flexShrink: 0,
+                          mt: 0.5
+                        }}
+                      >
+                        3
+                      </Box>
+                      <Box>
+                        <Typography variant="h6" component="h4" gutterBottom fontWeight="bold" color="primary"
+                          sx={{ fontSize: { xs: '1rem', md: '1.1rem' }, mb: 0.5 }}>
+                          Connect & Exchange
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Message other students, agree on terms, and meet on campus to complete your transaction safely and easily.
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Stack>
+                </Box>
+              </Paper>
+              
+              <Box sx={{ textAlign: 'center', mt: 3 }}>
+                <Button 
+                  variant="contained" 
+                  component={RouterLink} 
+                  to="/register"
+                  size="medium"
+                  color="secondary"
+                  sx={{ 
+                    py: 1, 
+                    px: 3, 
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Join KIIT Rentals Today
+                </Button>
               </Box>
-              <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
-                Sign Up
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
-                Create a free account using your KIIT email address. Verify your student status and set up your profile in minutes.
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                height: '100%',
-                p: 4, 
-                textAlign: 'center',
-                borderRadius: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                border: '2px solid rgba(88, 128, 97, 0.1)',
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
-                  border: '2px solid rgba(88, 128, 97, 0.3)',
-                }
-              }}
-            >
-              <Box 
-                sx={{ 
-                  mb: 2, 
-                  color: 'white', 
-                  backgroundColor: theme.palette.primary.main,
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 30,
-                  fontWeight: 'bold',
-                  mx: 'auto'
-                }}
-              >
-                2
-              </Box>
-              <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
-                Browse or List
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
-                Look through items available for sale or rent, or list your own items with photos and detailed descriptions.
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Paper 
-              elevation={3} 
-              sx={{ 
-                height: '100%',
-                p: 4, 
-                textAlign: 'center',
-                borderRadius: 4,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                border: '2px solid rgba(88, 128, 97, 0.1)',
-                transition: 'all 0.3s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-10px)',
-                  boxShadow: '0 15px 30px rgba(88, 128, 97, 0.1)',
-                  border: '2px solid rgba(88, 128, 97, 0.3)',
-                }
-              }}
-            >
-              <Box 
-                sx={{ 
-                  mb: 2, 
-                  color: 'white', 
-                  backgroundColor: theme.palette.primary.main,
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 30,
-                  fontWeight: 'bold',
-                  mx: 'auto'
-                }}
-              >
-                3
-              </Box>
-              <Typography variant="h4" component="h3" gutterBottom fontWeight="bold" color="primary">
-                Connect & Exchange
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ flexGrow: 1 }}>
-                Message other students, agree on terms, and meet on campus to complete your transaction safely and easily.
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-        
-        <Box sx={{ textAlign: 'center', mt: 6 }}>
-          <Button 
-            variant="contained" 
-            component={RouterLink} 
-            to="/register"
-            size="large"
-            color="secondary"
-            sx={{ 
-              py: 1.5, 
-              px: 4, 
-              fontWeight: 'bold',
-            }}
-          >
-            Join KIIT Rentals Today
-          </Button>
-        </Box>
-      </Container>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
       
       {/* Add back the original CTA Banner */}
       <Box 
