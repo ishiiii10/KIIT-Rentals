@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import { 
   Container, 
@@ -15,47 +16,18 @@ import {
   CardContent,
   Stack
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { getProducts } from '../api/product';
-import { Product } from '../api/product';
-import ProductCard from '../components/ProductCard';
 import { alpha } from '@mui/material/styles';
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const data = await getProducts();
-        
-        // Get 2 random products for sale and 2 for rent
-        const saleProducts = data.filter(product => product.type === 'sale');
-        const rentProducts = data.filter(product => product.type === 'rent');
-        
-        const shuffledSale = [...saleProducts].sort(() => 0.5 - Math.random()).slice(0, 2);
-        const shuffledRent = [...rentProducts].sort(() => 0.5 - Math.random()).slice(0, 2);
-        
-        // Combine both types of featured products
-        setFeaturedProducts([...shuffledSale, ...shuffledRent]);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const navigate = useNavigate();
 
   const benefits = [
     {
@@ -246,112 +218,137 @@ const Home = () => {
       </Box>
 
       {/* Featured Products Section */}
-      <Box sx={{ 
-        bgcolor: 'rgba(88, 128, 97, 0.05)', 
-        py: { xs: 5, md: 10 },
-        borderTop: '1px solid rgba(88, 128, 97, 0.1)',
-        borderBottom: '1px solid rgba(88, 128, 97, 0.1)',
-        position: 'relative',
-      }}>
+      <Box 
+        sx={{ 
+          py: { xs: 5, md: 8 },
+          borderTop: '1px solid',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundColor: 'background.paper',
+          zIndex: 1
+        }}
+      >
         {/* Decorative elements */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 100,
-            right: -50,
-            width: 150,
-            height: 150,
-            borderRadius: '50%',
-            background: 'rgba(231, 181, 236, 0.1)',
-            zIndex: 0,
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 80,
-            left: -80,
-            width: 200,
-            height: 200,
-            borderRadius: '50%',
-            background: 'rgba(88, 128, 97, 0.1)',
-            zIndex: 0,
-          }}
-        />
+        <Box sx={{ 
+          position: 'absolute', 
+          left: -100, 
+          top: -100, 
+          width: 300, 
+          height: 300, 
+          borderRadius: '50%', 
+          background: 'radial-gradient(circle, rgba(76,175,80,0.1) 0%, rgba(76,175,80,0) 70%)',
+          zIndex: 0
+        }} />
         
-        <Container sx={{ position: 'relative', zIndex: 1 }}>
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+        <Box sx={{ 
+          position: 'absolute', 
+          right: -50, 
+          bottom: -50, 
+          width: 200, 
+          height: 200, 
+          borderRadius: '50%', 
+          background: 'radial-gradient(circle, rgba(3,169,244,0.1) 0%, rgba(3,169,244,0) 70%)',
+          zIndex: 0
+        }} />
+        
+        <Container sx={{ position: 'relative', zIndex: 2 }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 }, maxWidth: 700, mx: 'auto' }}>
             <Typography 
               variant="h3" 
               component="h2" 
-              gutterBottom 
-              fontWeight="bold" 
+              gutterBottom
+              fontWeight="bold"
               color="primary"
-              sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
+              sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}
             >
-              Featured Items
+              Categories
             </Typography>
-            <Divider sx={{ mb: 2, mx: 'auto', width: 80, borderColor: theme.palette.primary.main, borderWidth: 3 }} />
-            <Typography 
-              variant="h6" 
-              color="text.secondary" 
-              sx={{ 
-                mb: 2, 
-                maxWidth: 700, 
-                mx: 'auto',
-                fontSize: { xs: '1rem', md: '1.25rem' },
-              }}
-            >
-              Discover what other students are offering right now
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              Browse through our popular categories
             </Typography>
           </Box>
 
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}>
-              <CircularProgress color="primary" size={60} thickness={4} />
-            </Box>
-          ) : (
-            <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} justifyContent="center">
-              {featuredProducts.map((product) => (
-                <Grid item key={product._id} xs={12} sm={6} md={3}>
-                  <Box 
-                    sx={{ 
-                      transform: 'translateY(0)',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                      width: '100%',
-                      maxWidth: 300,
-                      height: 450,
-                      mx: 'auto',
-                      '&:hover': {
-                        transform: 'translateY(-10px)',
-                      }
-                    }}
-                  >
-                    <ProductCard product={product} />
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
-          )}
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gap: 3
+          }}>
+            {[
+              { name: 'Smacks', icon: '🍟', color: 'rgba(76, 175, 80, 0.15)' },
+              { name: 'Books', icon: '📚', color: 'rgba(3, 169, 244, 0.15)' },
+              { name: 'Vehicles', icon: '🚗', color: 'rgba(233, 30, 99, 0.15)' },
+              { name: 'Clothing', icon: '👕', color: 'rgba(255, 152, 0, 0.15)' }
+            ].map((category, index) => (
+              <Paper
+                key={index}
+                elevation={1}
+                sx={{
+                  p: 3,
+                  borderRadius: 3,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  height: '100%',
+                  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: 4
+                  }
+                }}
+              >
+                <Box 
+                  sx={{ 
+                    width: 80, 
+                    height: 80, 
+                    borderRadius: '50%', 
+                    bgcolor: category.color,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 2,
+                    fontSize: '2rem'
+                  }}
+                >
+                  {category.icon}
+                </Box>
+                <Typography variant="h6" gutterBottom fontWeight="bold">
+                  {category.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  Find amazing deals on {category.name.toLowerCase()}
+                </Typography>
+                <Button 
+                  variant="outlined" 
+                  color="primary"
+                  size="small"
+                  onClick={() => navigate('/products')}
+                  sx={{ mt: 'auto' }}
+                >
+                  Browse Items
+                </Button>
+              </Paper>
+            ))}
+          </Box>
 
-          <Box sx={{ textAlign: 'center', mt: { xs: 5, md: 8 } }}>
-            <Button 
-              variant="contained" 
-              component={RouterLink} 
-              to="/products"
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Button
+              variant="contained"
+              color="primary"
               size="large"
               startIcon={<ShoppingCartIcon />}
+              onClick={() => navigate('/products')}
               sx={{ 
                 py: 1.5, 
                 px: 4, 
-                fontWeight: 'bold',
                 borderRadius: 2,
-                boxShadow: '0 4px 10px rgba(88, 128, 97, 0.25)',
+                fontWeight: 'bold',
+                boxShadow: theme.shadows[4],
                 '&:hover': {
-                  boxShadow: '0 6px 15px rgba(88, 128, 97, 0.3)',
-                  transform: 'translateY(-3px)'
-                },
-                transition: 'all 0.3s ease'
+                  boxShadow: theme.shadows[8],
+                }
               }}
             >
               View All Products

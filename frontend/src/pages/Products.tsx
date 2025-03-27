@@ -154,8 +154,8 @@ const Products = () => {
               backgroundColor: 'white',
             }}
           >
-            <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
-              <Grid item xs={12} md={6}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: { xs: 1, sm: 2 } }}>
+              <Box sx={{ width: { xs: '100%', md: '50%' } }}>
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -187,9 +187,9 @@ const Products = () => {
                     }
                   }}
                 />
-              </Grid>
+              </Box>
               
-              <Grid item xs={12} md={6}>
+              <Box sx={{ width: { xs: '100%', md: '50%' } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                   <ToggleButtonGroup
                     value={listingType}
@@ -264,8 +264,8 @@ const Products = () => {
                     Sort
                   </Button>
                 </Box>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Paper>
         </Box>
 
@@ -303,16 +303,20 @@ const Products = () => {
 
           {/* Products grid */}
           {loading ? (
-            <Grid container spacing={3} justifyContent="center">
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5, mt: 3 }}>
               {Array(8).fill(null).map((_, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={`skeleton-${index}`}>
+                <Box 
+                  key={`skeleton-${index}`}
+                  sx={{ 
+                    width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
+                    p: 1.5 
+                  }}
+                >
                   <Paper sx={{ 
                     borderRadius: 2, 
                     overflow: 'hidden', 
                     height: 450, 
-                    width: '100%',
-                    maxWidth: 300,
-                    mx: 'auto'
+                    width: '100%'
                   }}>
                     <Skeleton variant="rectangular" width="100%" height={200} />
                     <Box sx={{ p: 2 }}>
@@ -321,9 +325,9 @@ const Products = () => {
                       <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
                     </Box>
                   </Paper>
-                </Grid>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           ) : (
             <>
               {filteredProducts.length === 0 ? (
@@ -346,33 +350,19 @@ const Products = () => {
                 </Paper>
               ) : (
                 <Box sx={{ mt: 3 }}>
-                  <Grid 
-                    container 
-                    spacing={3} 
-                    justifyContent="center"
-                  >
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5 }}>
                     {filteredProducts.map((product) => (
-                      <Grid 
-                        item 
-                        xs={12} 
-                        sm={6} 
-                        md={4} 
-                        lg={3} 
-                        key={product._id}
+                      <Box 
+                        key={product._id} 
+                        sx={{ 
+                          width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
+                          p: 1.5 
+                        }}
                       >
-                        <Box 
-                          sx={{ 
-                            width: '100%',
-                            maxWidth: 300,
-                            height: 450,
-                            mx: 'auto'
-                          }}
-                        >
-                          <ProductCard product={product} />
-                        </Box>
-                      </Grid>
+                        <ProductCard product={product} />
+                      </Box>
                     ))}
-                  </Grid>
+                  </Box>
                 </Box>
               )}
             </>
