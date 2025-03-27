@@ -20,7 +20,15 @@ export const getProducts = async (): Promise<Product[]> => {
       throw new Error(response.data.message || 'Failed to fetch products');
     }
     
-    return response.data.data || [];
+    const products = response.data.data || [];
+    console.log('Products fetched successfully:', products);
+    
+    // Check each product for phone number
+    products.forEach((product, index) => {
+      console.log(`Product ${index} (${product._id}) - Phone: ${product.phone}, Type: ${product.type}`);
+    });
+    
+    return products;
   } catch (error: any) {
     console.error('Error fetching products:', error);
     if (error.response?.data?.message) {
@@ -32,12 +40,16 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const createProduct = async (product: Product): Promise<Product> => {
   try {
+    console.log('Creating product with data:', product);
+    console.log('Phone field being sent to backend:', product.phone);
+    
     const response = await api.post<ApiResponse<Product>>('/products', product);
     
     if (!response.data.success) {
       throw new Error(response.data.message || 'Failed to create product');
     }
     
+    console.log('Product created successfully:', response.data.data);
     return response.data.data as Product;
   } catch (error: any) {
     console.error('Error creating product:', error);
@@ -50,12 +62,15 @@ export const createProduct = async (product: Product): Promise<Product> => {
 
 export const updateProduct = async (id: string, product: Product): Promise<Product> => {
   try {
+    console.log('Updating product with data:', product);
+    
     const response = await api.put<ApiResponse<Product>>(`/products/${id}`, product);
     
     if (!response.data.success) {
       throw new Error(response.data.message || 'Failed to update product');
     }
     
+    console.log('Product updated successfully:', response.data.data);
     return response.data.data as Product;
   } catch (error: any) {
     console.error('Error updating product:', error);

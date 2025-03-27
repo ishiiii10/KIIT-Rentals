@@ -4,7 +4,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Paper,
   Button,
   Chip,
@@ -12,8 +11,10 @@ import {
   CircularProgress,
   Alert,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import PhoneIcon from '@mui/icons-material/Phone';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import { useAuth } from '../context/AuthContext';
@@ -100,8 +101,8 @@ const ProductDetail = () => {
       </Button>
 
       <Paper elevation={2} sx={{ overflow: 'hidden' }}>
-        <Grid container>
-          <Grid item xs={12} md={6}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
+          <Box sx={{ width: { xs: '100%', md: '50%' } }}>
             <Box
               component="img"
               src={product.image}
@@ -113,29 +114,54 @@ const ProductDetail = () => {
                 maxHeight: { xs: '300px', md: '500px' },
               }}
             />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </Box>
+          <Box sx={{ width: { xs: '100%', md: '50%' } }}>
             <Box sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="h4" component="h1" gutterBottom>
                   {product.name}
                 </Typography>
                 <Chip
-                  label={product.price >= 500 ? 'For Sale' : 'For Rent'}
-                  color={product.price >= 500 ? 'success' : 'info'}
+                  label={product.type === 'rent' ? 'For Rent' : 'For Sale'}
+                  color={product.type === 'rent' ? 'info' : 'success'}
                   sx={{ ml: 2 }}
                 />
               </Box>
 
               <Typography variant="h5" color="primary" sx={{ mt: 2, fontWeight: 'bold' }}>
                 ₹{product.price.toFixed(2)}
+                {product.type === 'rent' && <Typography component="span" variant="body2" sx={{ ml: 1 }}>/ day</Typography>}
               </Typography>
+
+              {product.phone && (
+                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                  <PhoneIcon sx={{ color: 'text.secondary', mr: 1 }} />
+                  <Typography variant="body1" color="text.secondary">
+                    Contact: <Typography component="span" fontWeight="bold" color="secondary.main">+91 {product.phone}</Typography>
+                  </Typography>
+                </Box>
+              )}
 
               <Divider sx={{ my: 3 }} />
 
               <Typography variant="body1" sx={{ mb: 3 }}>
                 This product is offered by a KIIT student. Contact the seller for more details about the product.
               </Typography>
+
+              {product.phone && (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  size="large"
+                  fullWidth
+                  startIcon={<PhoneIcon />}
+                  component="a"
+                  href={`tel:+91${product.phone}`}
+                  sx={{ mb: 2 }}
+                >
+                  Contact Seller
+                </Button>
+              )}
 
               <Button
                 variant="contained"
@@ -146,7 +172,7 @@ const ProductDetail = () => {
                 onClick={handlePurchase}
                 sx={{ mt: 2 }}
               >
-                {product.price >= 500 ? 'Buy Now' : 'Rent Now'}
+                {product.type === 'rent' ? 'Rent Now' : 'Buy Now'}
               </Button>
 
               {!isAuthenticated && (
@@ -155,8 +181,8 @@ const ProductDetail = () => {
                 </Typography>
               )}
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Paper>
     </Container>
   );

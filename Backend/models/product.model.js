@@ -13,6 +13,16 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    type: {
+        type: String,
+        enum: ['sale', 'rent'],
+        default: 'sale',
+        required: true
+    },
+    phone: {
+        type: String,
+        required: true
+    }
 }, {
     timestamps: true // createdAt,updatedAt
 }

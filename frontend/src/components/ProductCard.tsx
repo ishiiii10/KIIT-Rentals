@@ -32,6 +32,10 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
   const navigate = useNavigate();
   const isForRent = product.type === 'rent';
 
+  // Debug log the product data to see if phone exists
+  console.log('ProductCard received product:', product);
+  console.log('Phone number from product:', product.phone);
+
   // If image is broken, use a placeholder
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.onerror = null; // Prevent infinite loop
@@ -48,6 +52,8 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
       year: 'numeric',
     });
   };
+
+  console.log('Product type:', product.type, 'isForRent:', isForRent);
 
   return (
     <Card
@@ -221,21 +227,23 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
               View Details
             </Button>
             
-            <Button 
-              size="medium" 
-              color="secondary"
-              variant="outlined"
-              startIcon={<PhoneIcon />}
-              component="a"
-              href={`tel:+91${product.phone}`}
-              sx={{ 
-                borderRadius: 2,
-                py: 0.75,
-                mt: 1
-              }}
-            >
-              Contact Seller: +91 {product.phone}
-            </Button>
+            {product.phone && (
+              <Button 
+                size="medium" 
+                color="secondary"
+                variant="outlined"
+                startIcon={<PhoneIcon />}
+                component="a"
+                href={`tel:+91${product.phone}`}
+                sx={{ 
+                  borderRadius: 2,
+                  py: 0.75,
+                  mt: 1
+                }}
+              >
+                Contact Seller: +91 {product.phone}
+              </Button>
+            )}
           </Stack>
         )}
       </CardActions>

@@ -103,14 +103,26 @@ const MyProducts = () => {
     setIsSubmitting(true);
     setError(null);
     try {
+      // Ensure all required fields are present, especially phone
+      const productData = {
+        ...values,
+        name: values.name,
+        price: values.price,
+        image: values.image,
+        type: values.type,
+        phone: values.phone,
+      };
+      
+      console.log('Product data being submitted:', productData);
+      
       if (productToEdit && productToEdit._id) {
         // Update existing product
-        const updatedProduct = await updateProduct(productToEdit._id, values);
+        const updatedProduct = await updateProduct(productToEdit._id, productData);
         setProducts(products.map(p => (p._id === updatedProduct._id ? updatedProduct : p)));
         setSuccess('Product updated successfully');
       } else {
         // Create new product
-        const newProduct = await createProduct(values);
+        const newProduct = await createProduct(productData);
         setProducts([...products, newProduct]);
         setSuccess('Product created successfully');
       }

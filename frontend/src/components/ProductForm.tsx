@@ -67,7 +67,7 @@ const validationSchema = Yup.object({
     .test('is-url-or-file', 'Please provide a valid image URL or upload a file', 
       function(value) {
         // Accept value if it's a valid URL or the image was uploaded
-        return (
+        return Boolean(
           (value && value.startsWith('data:image')) || // Base64 image data
           (value && (value.startsWith('http://') || value.startsWith('https://')))
         );
@@ -211,7 +211,21 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
           validationSchema={validationSchema}
           onSubmit={async (values) => {
             try {
-              await onSubmit(values);
+              // Explicitly create a new object with all fields to ensure phone is included
+              const productToSubmit = {
+                _id: values._id,
+                name: values.name,
+                price: values.price,
+                image: values.image,
+                type: values.type,
+                phone: values.phone, // Explicitly include the phone
+              };
+              
+              console.log('Form values before submission:', values);
+              console.log('Phone number being submitted:', values.phone);
+              console.log('Final product object being submitted:', productToSubmit);
+              
+              await onSubmit(productToSubmit);
             } catch (error) {
               console.error('Error submitting form:', error);
             }
