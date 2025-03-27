@@ -87,6 +87,10 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
           zIndex: 10,
           fontWeight: 'bold',
           px: 1,
+          color: 'white',
+          '& .MuiChip-icon': {
+            color: 'white'
+          }
         }}
       />
 
@@ -227,23 +231,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
               View Details
             </Button>
             
-            {product.phone && (
-              <Button 
-                size="medium" 
-                color="secondary"
-                variant="outlined"
-                startIcon={<PhoneIcon />}
-                component="a"
-                href={`tel:+91${product.phone}`}
-                sx={{ 
-                  borderRadius: 2,
-                  py: 0.75,
-                  mt: 1
-                }}
-              >
-                Contact Seller: +91 {product.phone}
-              </Button>
-            )}
+            {/* Phone number removed - only shows in product details page */}
           </Stack>
         )}
       </CardActions>

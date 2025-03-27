@@ -134,10 +134,19 @@ const ProductDetail = () => {
               </Typography>
 
               {product.phone && (
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                  <PhoneIcon sx={{ color: 'text.secondary', mr: 1 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    Contact: <Typography component="span" fontWeight="bold" color="secondary.main">+91 {product.phone}</Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  mt: 2,
+                  p: 2,
+                  bgcolor: 'background.paper',
+                  borderRadius: 2,
+                  border: '1px solid',
+                  borderColor: 'divider'
+                }}>
+                  <PhoneIcon sx={{ color: 'secondary.main', mr: 1, fontSize: '1.5rem' }} />
+                  <Typography variant="body1">
+                    Contact: <Typography component="span" fontWeight="bold" color="secondary.main" sx={{ fontSize: '1.1rem' }}>+91 {product.phone}</Typography>
                   </Typography>
                 </Box>
               )}
