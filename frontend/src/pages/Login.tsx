@@ -8,7 +8,6 @@ import {
   Link,
   Paper,
   Box,
-  Avatar,
   CircularProgress,
   Alert,
   useTheme,
@@ -20,7 +19,6 @@ import {
   Chip,
   Stack,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -63,8 +61,9 @@ const Login = () => {
         const userData = await login(values);
         setUser(userData);
         navigate('/');
-      } catch (err: any) {
-        setError(err.message || 'Login failed. Please try again.');
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Login failed. Please try again.';
+        setError(errorMessage);
         console.error('Login error:', err);
       } finally {
         setLoading(false);
@@ -79,29 +78,56 @@ const Login = () => {
   return (
     <Box 
       sx={{ 
-        minHeight: '100vh', 
+        minHeight: '100vh',
+        width: '100vw',
+        maxWidth: '100%',
         display: 'flex', 
         alignItems: 'center', 
         background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
-        py: { xs: 4, sm: 6, md: 8 },
+        py: { xs: 2, sm: 4, md: 6 },
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth={false} 
+        disableGutters 
+        sx={{ 
+          width: '100%', 
+          m: 0, 
+          p: { xs: '0 16px', sm: '0 24px' },
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
         <Box 
           sx={{ 
             display: 'flex', 
             flexDirection: { xs: 'column', md: 'row' }, 
             alignItems: 'center', 
             justifyContent: 'center',
-            gap: { xs: 3, md: 4 }
+            gap: { xs: 2, sm: 3, md: 4 },
+            width: '100%',
+            maxWidth: '1200px'
           }}
         >
           {/* Left side - Login form */}
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: 500 }, flex: { md: 1 } }}>
+          <Box 
+            sx={{ 
+              width: '100%', 
+              maxWidth: { xs: '100%', md: 500 }, 
+              flex: { md: 1 },
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
             <Paper
               elevation={5}
               sx={{
-                p: { xs: 3, md: 4 },
+                p: { xs: 2, sm: 3, md: 4 },
                 borderRadius: 4,
                 backgroundColor: 'white',
                 display: 'flex',
@@ -111,6 +137,9 @@ const Login = () => {
                 overflow: 'hidden',
                 boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
                 border: '1px solid rgba(0, 0, 0, 0.05)',
+                width: '100%',
+                maxHeight: { xs: 'auto', md: '100%' },
+                overflowY: 'auto'
               }}
             >
               {/* Decorative circles */}

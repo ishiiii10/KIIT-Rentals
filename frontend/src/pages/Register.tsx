@@ -8,7 +8,6 @@ import {
   Link,
   Paper,
   Box,
-  Avatar,
   CircularProgress,
   Alert,
   useTheme,
@@ -20,7 +19,6 @@ import {
   Chip,
   Stack,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -68,8 +66,9 @@ const Register = () => {
         const userData = await register(values);
         setUser(userData);
         navigate('/');
-      } catch (err: any) {
-        setError(err.message || 'Registration failed. Please try again.');
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+        setError(errorMessage);
         console.error('Registration error:', err);
       } finally {
         setLoading(false);
@@ -84,44 +83,67 @@ const Register = () => {
   return (
     <Box 
       sx={{ 
-        minHeight: '100vh', 
+        minHeight: '100vh',
+        width: '100vw',
+        maxWidth: '100%',
         display: 'flex', 
         alignItems: 'center', 
         background: `linear-gradient(135deg, ${alpha(theme.palette.secondary.light, 0.2)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 100%)`,
-        py: { xs: 4, sm: 6, md: 8 },
+        py: { xs: 2, sm: 4, md: 6 },
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box',
+        overflow: 'hidden'
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth={false} 
+        disableGutters 
+        sx={{ 
+          width: '100%', 
+          m: 0, 
+          p: { xs: '0 16px', sm: '0 24px' },
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
         <Box 
           sx={{ 
             display: 'flex', 
             flexDirection: { xs: 'column', md: 'row' }, 
             alignItems: 'center', 
             justifyContent: 'center',
-            gap: { xs: 3, md: 4 }
+            gap: { xs: 2, sm: 3, md: 4 },
+            width: '100%',
+            maxWidth: '1200px'
           }}
         >
           {/* Left side - Illustration and info */}
           <Box 
             sx={{ 
-              display: { xs: 'none', md: 'block' },
+              display: { xs: 'none', md: 'flex' },
               position: 'relative',
               width: '100%',
               maxWidth: { md: 500 },
               flex: { md: 1 },
-              order: { xs: 2, md: 1 }
+              order: { xs: 2, md: 1 },
+              height: '100%',
+              alignItems: 'center'
             }}
           >
             <Paper
               elevation={0}
               sx={{
-                p: 4,
+                p: { xs: 2, sm: 3, md: 4 },
                 height: '100%',
                 bgcolor: 'transparent',
                 border: 'none',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
+                width: '100%',
+                maxHeight: { xs: 'auto', md: '100%' },
+                overflowY: 'auto'
               }}
             >
               <Box 
@@ -239,12 +261,22 @@ const Register = () => {
             </Paper>
           </Box>
           
-          {/* Right side - Register form */}
-          <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: 500 }, flex: { md: 1 }, order: { xs: 1, md: 2 } }}>
+          {/* Right side - Registration form */}
+          <Box 
+            sx={{ 
+              width: '100%', 
+              maxWidth: { xs: '100%', md: 500 }, 
+              flex: { md: 1 }, 
+              order: { xs: 1, md: 2 },
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
             <Paper
               elevation={5}
               sx={{
-                p: { xs: 3, md: 4 },
+                p: { xs: 2, sm: 3, md: 4 },
                 borderRadius: 4,
                 backgroundColor: 'white',
                 display: 'flex',
@@ -254,6 +286,9 @@ const Register = () => {
                 overflow: 'hidden',
                 boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
                 border: '1px solid rgba(0, 0, 0, 0.05)',
+                width: '100%',
+                maxHeight: { xs: 'auto', md: '100%' },
+                overflowY: 'auto'
               }}
             >
               {/* Decorative circles */}
