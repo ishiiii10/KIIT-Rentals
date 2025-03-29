@@ -22,6 +22,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import CheckroomIcon from '@mui/icons-material/Checkroom';
 import { alpha } from '@mui/material/styles';
 
 const Home = () => {
@@ -276,10 +280,10 @@ const Home = () => {
             gap: 3
           }}>
             {[
-              { name: 'Smacks', icon: '🍟', color: 'rgba(76, 175, 80, 0.15)' },
-              { name: 'Books', icon: '📚', color: 'rgba(3, 169, 244, 0.15)' },
-              { name: 'Vehicles', icon: '🚗', color: 'rgba(233, 30, 99, 0.15)' },
-              { name: 'Clothing', icon: '👕', color: 'rgba(255, 152, 0, 0.15)' }
+              { name: 'Snacks', icon: <FastfoodIcon fontSize="large" />, color: 'rgba(76, 175, 80, 0.15)', category: 'snacks' },
+              { name: 'Books', icon: <MenuBookIcon fontSize="large" />, color: 'rgba(3, 169, 244, 0.15)', category: 'books' },
+              { name: 'Vehicles', icon: <DirectionsCarIcon fontSize="large" />, color: 'rgba(233, 30, 99, 0.15)', category: 'vehicles' },
+              { name: 'Clothing', icon: <CheckroomIcon fontSize="large" />, color: 'rgba(255, 152, 0, 0.15)', category: 'clothing' }
             ].map((category, index) => (
               <Paper
                 key={index}
@@ -295,9 +299,11 @@ const Home = () => {
                   transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease',
                   '&:hover': {
                     transform: 'translateY(-8px)',
-                    boxShadow: 4
+                    boxShadow: 4,
+                    cursor: 'pointer'
                   }
                 }}
+                onClick={() => navigate(`/products?category=${category.category}`)}
               >
                 <Box 
                   sx={{ 
@@ -309,7 +315,7 @@ const Home = () => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     mb: 2,
-                    fontSize: '2rem'
+                    color: '#555'
                   }}
                 >
                   {category.icon}
@@ -324,7 +330,10 @@ const Home = () => {
                   variant="outlined" 
                   color="primary"
                   size="small"
-                  onClick={() => navigate('/products')}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the parent onClick
+                    navigate(`/products?category=${category.category}`);
+                  }}
                   sx={{ mt: 'auto' }}
                 >
                   Browse Items

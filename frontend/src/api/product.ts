@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   image: string;
   type: 'sale' | 'rent';
+  category: 'books' | 'vehicles' | 'snacks' | 'clothing';
   phone: string;
   createdAt?: string;
   updatedAt?: string;

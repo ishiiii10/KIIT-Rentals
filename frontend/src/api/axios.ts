@@ -5,7 +5,9 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true
+    withCredentials: true,
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity
 });
 
 // Add a request interceptor to add the auth token

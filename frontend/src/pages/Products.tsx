@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Grid from '@mui/material/Grid';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
@@ -23,6 +23,10 @@ import SortIcon from '@mui/icons-material/Sort';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import CheckroomIcon from '@mui/icons-material/Checkroom';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
@@ -34,7 +38,22 @@ const Products = () => {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [listingType, setListingType] = useState<'all' | 'sale' | 'rent'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Get category from URL query parameter
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const categoryParam = queryParams.get('category');
+    
+    if (categoryParam && ['books', 'vehicles', 'snacks', 'clothing'].includes(categoryParam)) {
+      setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory(null);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,8 +62,9 @@ const Products = () => {
         const data = await getProducts();
         setProducts(data);
         setFilteredProducts(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load products. Please try again later.');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load products. Please try again later.';
+        setError(errorMessage);
         console.error('Products fetch error:', err);
       } finally {
         setLoading(false);
@@ -69,8 +89,13 @@ const Products = () => {
       filtered = filtered.filter((product) => product.type === listingType);
     }
     
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter((product) => product.category === selectedCategory);
+    }
+    
     setFilteredProducts(filtered);
-  }, [searchTerm, products, listingType]);
+  }, [searchTerm, products, listingType, selectedCategory]);
 
   const handleListingTypeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -78,6 +103,39 @@ const Products = () => {
   ) => {
     if (newListingType !== null) {
       setListingType(newListingType);
+    }
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+    
+    // Update URL query parameter
+    if (category) {
+      navigate(`/products?category=${category}`);
+    } else {
+      navigate('/products');
+    }
+  };
+
+  // Get category icon
+  const getCategoryIcon = (category: string) => {
+    switch(category) {
+      case 'books': return <MenuBookIcon />;
+      case 'vehicles': return <DirectionsCarIcon />;
+      case 'snacks': return <FastfoodIcon />;
+      case 'clothing': return <CheckroomIcon />;
+      default: return <MenuBookIcon />;
+    }
+  };
+
+  // Get category color
+  const getCategoryColor = (category: string): 'success' | 'info' | 'warning' | 'error' | 'default' => {
+    switch(category) {
+      case 'books': return 'success';
+      case 'vehicles': return 'info';
+      case 'snacks': return 'warning';
+      case 'clothing': return 'error';
+      default: return 'default';
     }
   };
 
@@ -131,7 +189,9 @@ const Products = () => {
             color="primary"
             sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
           >
-            Explore Products
+            {selectedCategory 
+              ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products` 
+              : 'Explore Products'}
           </Typography>
           <Typography 
             variant="h6" 
@@ -143,6 +203,24 @@ const Products = () => {
           >
             Discover what fellow KIIT students are selling and renting
           </Typography>
+
+          {/* Category Filter Chips */}
+          {selectedCategory && (
+            <Box sx={{ mb: 3 }}>
+              <Chip
+                icon={getCategoryIcon(selectedCategory)}
+                label={`${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`}
+                color={getCategoryColor(selectedCategory)}
+                onDelete={() => handleCategoryChange(null)}
+                sx={{ 
+                  p: 0.5, 
+                  fontWeight: 'bold',
+                  color: 'white',
+                  '& .MuiChip-icon': { color: 'white' }
+                }}
+              />
+            </Box>
+          )}
           
           {/* Search and Filter Bar */}
           <Paper
@@ -287,90 +365,4 @@ const Products = () => {
               sx={{ fontWeight: 'medium', color: 'text.secondary' }}
             >
               {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} 
-              {listingType !== 'all' && ` for ${listingType === 'sale' ? 'sale' : 'rent'}`}
-            </Typography>
-            
-            {searchTerm && (
-              <Chip 
-                label={`Search: "${searchTerm}"`}
-                onDelete={() => setSearchTerm('')}
-                color="primary"
-                variant="outlined"
-                size="small"
-              />
-            )}
-          </Box>
-
-          {/* Products grid */}
-          {loading ? (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5, mt: 3 }}>
-              {Array(8).fill(null).map((_, index) => (
-                <Box 
-                  key={`skeleton-${index}`}
-                  sx={{ 
-                    width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
-                    p: 1.5 
-                  }}
-                >
-                  <Paper sx={{ 
-                    borderRadius: 2, 
-                    overflow: 'hidden', 
-                    height: 450, 
-                    width: '100%'
-                  }}>
-                    <Skeleton variant="rectangular" width="100%" height={200} />
-                    <Box sx={{ p: 2 }}>
-                      <Skeleton variant="text" width="80%" height={32} />
-                      <Skeleton variant="text" width="50%" height={24} />
-                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
-                    </Box>
-                  </Paper>
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <>
-              {filteredProducts.length === 0 ? (
-                <Paper 
-                  sx={{ 
-                    p: 4, 
-                    textAlign: 'center', 
-                    mt: 3,
-                    borderRadius: 3,
-                    backgroundColor: 'rgba(88, 128, 97, 0.05)',
-                    border: '1px solid rgba(88, 128, 97, 0.1)'
-                  }}
-                >
-                  <Typography variant="h5" gutterBottom fontWeight="bold" color="primary">
-                    No products found
-                  </Typography>
-                  <Typography color="text.secondary" sx={{ mb: 3 }}>
-                    Try changing your search criteria or check back later for new listings.
-                  </Typography>
-                </Paper>
-              ) : (
-                <Box sx={{ mt: 3 }}>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5 }}>
-                    {filteredProducts.map((product) => (
-                      <Box 
-                        key={product._id} 
-                        sx={{ 
-                          width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
-                          p: 1.5 
-                        }}
-                      >
-                        <ProductCard product={product} />
-                      </Box>
-                    ))}
-                  </Box>
-                </Box>
-              )}
-            </>
-          )}
-        </Box>
-      </Container>
-    </Box>
-  );
-};
-
-export default Products; 
+              {listingType !== 'all' && `
