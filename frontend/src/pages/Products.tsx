@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
   Box, 
-  CircularProgress, 
   TextField, 
   InputAdornment,
   Paper,
@@ -13,14 +11,13 @@ import {
   Button,
   Skeleton,
   Stack,
-  useTheme,
   ToggleButtonGroup,
-  ToggleButton
+  ToggleButton,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import SortIcon from '@mui/icons-material/Sort';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -30,31 +27,31 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Products = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [listingType, setListingType] = useState<'all' | 'sale' | 'rent'>('all');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const theme = useTheme();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'books' | 'vehicles' | 'snacks' | 'clothing'>('all');
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
 
-  // Get category from URL query parameter
+  // Parse query params on initial load
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const categoryParam = queryParams.get('category');
+    const params = new URLSearchParams(location.search);
+    const categoryParam = params.get('category');
     
     if (categoryParam && ['books', 'vehicles', 'snacks', 'clothing'].includes(categoryParam)) {
-      setSelectedCategory(categoryParam);
-    } else {
-      setSelectedCategory(null);
+      setSelectedCategory(categoryParam as 'books' | 'vehicles' | 'snacks' | 'clothing');
     }
   }, [location.search]);
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       setError(null);
@@ -62,8 +59,11 @@ const Products = () => {
         const data = await getProducts();
         setProducts(data);
         setFilteredProducts(data);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load products. Please try again later.';
+      } catch (err: unknown) {
+        let errorMessage = 'Failed to load products. Please try again later.';
+        if (err instanceof Error) {
+          errorMessage = err.message || errorMessage;
+        }
         setError(errorMessage);
         console.error('Products fetch error:', err);
       } finally {
@@ -74,6 +74,7 @@ const Products = () => {
     fetchProducts();
   }, []);
 
+  // Apply filters when products, search, type, or category changes
   useEffect(() => {
     let filtered = [...products];
     
@@ -90,7 +91,7 @@ const Products = () => {
     }
     
     // Filter by category
-    if (selectedCategory) {
+    if (selectedCategory !== 'all') {
       filtered = filtered.filter((product) => product.category === selectedCategory);
     }
     
@@ -105,18 +106,29 @@ const Products = () => {
       setListingType(newListingType);
     }
   };
-
-  const handleCategoryChange = (category: string | null) => {
-    setSelectedCategory(category);
-    
-    // Update URL query parameter
-    if (category) {
-      navigate(`/products?category=${category}`);
-    } else {
-      navigate('/products');
-    }
+  
+  const handleFilterMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setFilterAnchorEl(event.currentTarget);
   };
-
+  
+  const handleFilterMenuClose = () => {
+    setFilterAnchorEl(null);
+  };
+  
+  const handleCategoryChange = (category: 'all' | 'books' | 'vehicles' | 'snacks' | 'clothing') => {
+    setSelectedCategory(category);
+    handleFilterMenuClose();
+    
+    // Update URL with category param
+    const params = new URLSearchParams(location.search);
+    if (category === 'all') {
+      params.delete('category');
+    } else {
+      params.set('category', category);
+    }
+    navigate({ search: params.toString() }, { replace: true });
+  };
+  
   // Get category icon
   const getCategoryIcon = (category: string) => {
     switch(category) {
@@ -124,18 +136,7 @@ const Products = () => {
       case 'vehicles': return <DirectionsCarIcon />;
       case 'snacks': return <FastfoodIcon />;
       case 'clothing': return <CheckroomIcon />;
-      default: return <MenuBookIcon />;
-    }
-  };
-
-  // Get category color
-  const getCategoryColor = (category: string): 'success' | 'info' | 'warning' | 'error' | 'default' => {
-    switch(category) {
-      case 'books': return 'success';
-      case 'vehicles': return 'info';
-      case 'snacks': return 'warning';
-      case 'clothing': return 'error';
-      default: return 'default';
+      default: return <FilterListIcon />;
     }
   };
 
@@ -189,9 +190,7 @@ const Products = () => {
             color="primary"
             sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.8rem' } }}
           >
-            {selectedCategory 
-              ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products` 
-              : 'Explore Products'}
+            Explore Products
           </Typography>
           <Typography 
             variant="h6" 
@@ -203,24 +202,6 @@ const Products = () => {
           >
             Discover what fellow KIIT students are selling and renting
           </Typography>
-
-          {/* Category Filter Chips */}
-          {selectedCategory && (
-            <Box sx={{ mb: 3 }}>
-              <Chip
-                icon={getCategoryIcon(selectedCategory)}
-                label={`${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}`}
-                color={getCategoryColor(selectedCategory)}
-                onDelete={() => handleCategoryChange(null)}
-                sx={{ 
-                  p: 0.5, 
-                  fontWeight: 'bold',
-                  color: 'white',
-                  '& .MuiChip-icon': { color: 'white' }
-                }}
-              />
-            </Box>
-          )}
           
           {/* Search and Filter Bar */}
           <Paper
@@ -330,7 +311,8 @@ const Products = () => {
                   <Button
                     variant="outlined"
                     color="primary"
-                    startIcon={<SortIcon />}
+                    startIcon={getCategoryIcon(selectedCategory)}
+                    onClick={handleFilterMenuOpen}
                     sx={{ 
                       py: 1.5, 
                       px: 2,
@@ -339,8 +321,91 @@ const Products = () => {
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    Sort
+                    {selectedCategory === 'all' ? 'Categories' : 
+                      selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
                   </Button>
+                  
+                  <Menu
+                    anchorEl={filterAnchorEl}
+                    open={Boolean(filterAnchorEl)}
+                    onClose={handleFilterMenuClose}
+                    PaperProps={{
+                      sx: { 
+                        mt: 1.5,
+                        px: 1,
+                        py: 1,
+                        borderRadius: 2,
+                        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
+                        width: 180
+                      }
+                    }}
+                  >
+                    <MenuItem 
+                      onClick={() => handleCategoryChange('all')}
+                      selected={selectedCategory === 'all'}
+                      sx={{ 
+                        borderRadius: 1,
+                        mb: 0.5,
+                        fontWeight: selectedCategory === 'all' ? 'bold' : 'normal'
+                      }}
+                    >
+                      <FilterListIcon sx={{ mr: 1, fontSize: '1.2rem' }} />
+                      All Categories
+                    </MenuItem>
+                    
+                    <Divider sx={{ my: 0.5 }} />
+                    
+                    <MenuItem 
+                      onClick={() => handleCategoryChange('books')}
+                      selected={selectedCategory === 'books'}
+                      sx={{ 
+                        borderRadius: 1,
+                        mb: 0.5,
+                        fontWeight: selectedCategory === 'books' ? 'bold' : 'normal'
+                      }}
+                    >
+                      <MenuBookIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#9c27b0' }} />
+                      Books
+                    </MenuItem>
+                    
+                    <MenuItem 
+                      onClick={() => handleCategoryChange('vehicles')}
+                      selected={selectedCategory === 'vehicles'}
+                      sx={{ 
+                        borderRadius: 1,
+                        mb: 0.5,
+                        fontWeight: selectedCategory === 'vehicles' ? 'bold' : 'normal'
+                      }}
+                    >
+                      <DirectionsCarIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#2196f3' }} />
+                      Vehicles
+                    </MenuItem>
+                    
+                    <MenuItem 
+                      onClick={() => handleCategoryChange('snacks')}
+                      selected={selectedCategory === 'snacks'}
+                      sx={{ 
+                        borderRadius: 1,
+                        mb: 0.5,
+                        fontWeight: selectedCategory === 'snacks' ? 'bold' : 'normal'
+                      }}
+                    >
+                      <FastfoodIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#ff9800' }} />
+                      Smacks
+                    </MenuItem>
+                    
+                    <MenuItem 
+                      onClick={() => handleCategoryChange('clothing')}
+                      selected={selectedCategory === 'clothing'}
+                      sx={{ 
+                        borderRadius: 1,
+                        fontWeight: selectedCategory === 'clothing' ? 'bold' : 'normal'
+                      }}
+                    >
+                      <CheckroomIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#e91e63' }} />
+                      Clothing
+                    </MenuItem>
+                  </Menu>
                 </Box>
               </Box>
             </Box>
@@ -365,4 +430,111 @@ const Products = () => {
               sx={{ fontWeight: 'medium', color: 'text.secondary' }}
             >
               {filteredProducts.length} {filteredProducts.length === 1 ? 'Product' : 'Products'} 
-              {listingType !== 'all' && `
+              {listingType !== 'all' && ` for ${listingType === 'sale' ? 'sale' : 'rent'}`}
+              {selectedCategory !== 'all' && ` in ${selectedCategory}`}
+            </Typography>
+            
+            <Stack direction="row" spacing={1}>
+              {searchTerm && (
+                <Chip 
+                  label={`Search: "${searchTerm}"`}
+                  onDelete={() => setSearchTerm('')}
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+              
+              {selectedCategory !== 'all' && (
+                <Chip 
+                  icon={getCategoryIcon(selectedCategory)}
+                  label={selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+                  onDelete={() => handleCategoryChange('all')}
+                  color={
+                    selectedCategory === 'books' ? 'secondary' :
+                    selectedCategory === 'vehicles' ? 'info' :
+                    selectedCategory === 'snacks' ? 'warning' : 'error'
+                  }
+                  size="small"
+                />
+              )}
+            </Stack>
+          </Box>
+
+          {/* Products grid */}
+          {loading ? (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5, mt: 3 }}>
+              {Array(8).fill(null).map((_, index) => (
+                <Box 
+                  key={`skeleton-${index}`}
+                  sx={{ 
+                    width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
+                    p: 1.5 
+                  }}
+                >
+                  <Paper sx={{ 
+                    borderRadius: 2, 
+                    overflow: 'hidden', 
+                    height: 450, 
+                    width: '100%'
+                  }}>
+                    <Skeleton variant="rectangular" width="100%" height={200} />
+                    <Box sx={{ p: 2 }}>
+                      <Skeleton variant="text" width="80%" height={32} />
+                      <Skeleton variant="text" width="50%" height={24} />
+                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
+                    </Box>
+                  </Paper>
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <>
+              {filteredProducts.length === 0 ? (
+                <Paper 
+                  sx={{ 
+                    p: 4, 
+                    textAlign: 'center', 
+                    mt: 3,
+                    borderRadius: 3,
+                    backgroundColor: 'rgba(88, 128, 97, 0.05)',
+                    border: '1px solid rgba(88, 128, 97, 0.1)'
+                  }}
+                >
+                  <Typography variant="h5" gutterBottom fontWeight="bold" color="primary">
+                    No products found
+                  </Typography>
+                  <Typography color="text.secondary" sx={{ mb: 3 }}>
+                    Try changing your search criteria or check back later for new listings.
+                  </Typography>
+                </Paper>
+              ) : (
+                <Box sx={{ mt: 3 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexWrap: 'wrap', 
+                    mx: -1.5
+                  }}>
+                    {filteredProducts.map((product) => (
+                      <Box 
+                        key={product._id} 
+                        sx={{ 
+                          width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
+                          p: 1.5 
+                        }}
+                      >
+                        <ProductCard product={product} />
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+            </>
+          )}
+        </Box>
+      </Container>
+    </Box>
+  );
+};
+
+export default Products; 

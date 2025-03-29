@@ -70,11 +70,11 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
   // Get appropriate color for category
   const getCategoryColor = () => {
     switch(product.category) {
-      case 'books': return 'success';
-      case 'vehicles': return 'info';
-      case 'snacks': return 'warning';
-      case 'clothing': return 'error';
-      default: return 'success';
+      case 'books': return 'secondary'; // Purple
+      case 'vehicles': return 'info'; // Blue
+      case 'snacks': return 'warning'; // Yellow/Orange
+      case 'clothing': return 'error'; // Red
+      default: return 'secondary';
     }
   };
 
@@ -121,7 +121,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
       <Chip
         icon={getCategoryIcon()}
         label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-        color={getCategoryColor() as 'success' | 'info' | 'warning' | 'error'}
+        color={getCategoryColor() as 'success' | 'info' | 'warning' | 'error' | 'secondary'}
         size="small"
         sx={{
           position: 'absolute',
