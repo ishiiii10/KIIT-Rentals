@@ -61,13 +61,19 @@ const validationSchema = Yup.object({
     .positive('Price must be positive'),
   image: Yup.string()
     .required('Image is required')
-    .test('is-url-or-file', 'Please provide a valid image URL or upload a file', 
+    .test('is-valid-image', 'Please provide a valid image URL or upload a file', 
       function(value) {
-        // Accept value if it's a valid URL or the image was uploaded
-        return Boolean(
-          (value && value.startsWith('data:image')) || // Base64 image data
-          (value && (value.startsWith('http://') || value.startsWith('https://')))
-        );
+        // Check if it's a base64 image
+        if (value && value.startsWith('data:image')) {
+          return true;
+        }
+        
+        // Check if it's a URL
+        if (value && (value.startsWith('http://') || value.startsWith('https://'))) {
+          return true;
+        }
+        
+        return false;
       }),
   type: Yup.string().oneOf(['sale', 'rent'], 'Type must be either sale or rent').required('Listing type is required'),
   category: Yup.string().oneOf(['books', 'vehicles', 'snacks', 'clothing'], 'Please select a valid category').required('Category is required'),
@@ -97,14 +103,20 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
       return;
     }
 
+    // Check file size (limit to 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size must be less than 5MB. Please choose a smaller image.');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
-        // Calculate new dimensions - limit to max 1200px width/height while preserving aspect ratio
+        // Calculate new dimensions - limit to max 800px width/height while preserving aspect ratio
         let width = img.width;
         let height = img.height;
-        const MAX_SIZE = 1200;
+        const MAX_SIZE = 800; // Reduced from 1200 to 800
         
         if (width > MAX_SIZE || height > MAX_SIZE) {
           if (width > height) {
@@ -116,28 +128,40 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
           }
         }
         
-        // Create canvas to resize and convert image to JPG
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = width;
-        canvas.height = height;
-        
-        // Draw image on canvas with white background (to handle transparency)
-        if (ctx) {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0, width, height);
+        try {
+          // Create canvas to resize and convert image to JPG
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = width;
+          canvas.height = height;
           
-          // Convert to JPEG format with moderate compression
-          try {
-            const jpgImage = canvas.toDataURL('image/jpeg', 0.7); // 0.7 quality for better compression
-            console.log('Image converted successfully');
-            setUploadedImage(jpgImage);
-            setFieldValue('image', jpgImage);
-          } catch (error) {
-            console.error('Error converting image:', error);
-            alert('There was an error processing your image. Please try a different image or use an image URL instead.');
+          // Draw image on canvas with white background (to handle transparency)
+          if (ctx) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to JPEG format with higher compression
+            try {
+              const jpgImage = canvas.toDataURL('image/jpeg', 0.6); // Increased compression (lower quality)
+              
+              // Check if resulting base64 string is not too long (max ~1MB)
+              if (jpgImage.length > 1024 * 1024) {
+                alert('The converted image is too large. Please use a smaller or more compressed image.');
+                return;
+              }
+              
+              console.log('Image converted successfully');
+              setUploadedImage(jpgImage);
+              setFieldValue('image', jpgImage);
+            } catch (error) {
+              console.error('Error converting image:', error);
+              alert('There was an error processing your image. Please try a different image or use an image URL instead.');
+            }
           }
+        } catch (error) {
+          console.error('Canvas error:', error);
+          alert('There was an error processing your image. Please try a different image or use an image URL instead.');
         }
       };
       img.onerror = () => {
@@ -151,6 +175,70 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
       alert('There was an error reading your file. Please try a different image or use an image URL instead.');
     };
     reader.readAsDataURL(file);
+  };
+
+  // Add a function to fetch and convert URL image to base64
+  const convertUrlToBase64 = async (url: string, setFieldValue: (field: string, value: string) => void) => {
+    try {
+      // Notify user
+      alert('Converting image from URL. This may take a moment...');
+      
+      // Create an image element
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // This allows loading images from other domains
+      
+      img.onload = () => {
+        try {
+          // Calculate new dimensions
+          let width = img.width;
+          let height = img.height;
+          const MAX_SIZE = 800;
+          
+          if (width > MAX_SIZE || height > MAX_SIZE) {
+            if (width > height) {
+              height = Math.round((height * MAX_SIZE) / width);
+              width = MAX_SIZE;
+            } else {
+              width = Math.round((width * MAX_SIZE) / height);
+              height = MAX_SIZE;
+            }
+          }
+          
+          // Create canvas to resize and convert image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = width;
+          canvas.height = height;
+          
+          if (ctx) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to JPEG format
+            const jpgImage = canvas.toDataURL('image/jpeg', 0.7);
+            setUploadedImage(jpgImage);
+            setFieldValue('image', jpgImage);
+            alert('Image converted successfully!');
+          }
+        } catch (error) {
+          console.error('Error converting URL to base64:', error);
+          alert('Failed to convert the image. Please try a different URL or upload a file directly.');
+        }
+      };
+      
+      img.onerror = () => {
+        console.error('Error loading image from URL');
+        alert('Failed to load the image from URL. Please ensure it\'s a valid image URL with proper CORS settings, or upload a file directly.');
+      };
+      
+      // Start loading the image
+      img.src = url;
+      
+    } catch (error) {
+      console.error('Error converting URL to base64:', error);
+      alert('Failed to convert the image. Please try a different URL or upload a file directly.');
+    }
   };
 
   return (
@@ -255,11 +343,23 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
               
               console.log('Form values before submission:', values);
               console.log('Phone number being submitted:', values.phone);
+              
+              // Log image data characteristics for debugging
+              if (values.image) {
+                const isBase64 = values.image.startsWith('data:image');
+                console.log('Image type:', isBase64 ? 'Base64 uploaded image' : 'URL');
+                if (isBase64) {
+                  console.log('Base64 image length:', values.image.length);
+                  console.log('Base64 image size approx:', Math.round(values.image.length * 0.75 / 1024), 'KB');
+                }
+              }
+              
               console.log('Final product object being submitted:', productToSubmit);
               
               await onSubmit(productToSubmit);
             } catch (error) {
               console.error('Error submitting form:', error);
+              alert('Failed to submit the form. Please try again.');
             }
           }}
           enableReinitialize
@@ -654,6 +754,16 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                         }
                       }}
                     />
+                    {values.image && values.image.startsWith('http') && (
+                      <Button
+                        size="small"
+                        color="secondary"
+                        onClick={() => convertUrlToBase64(values.image, setFieldValue)}
+                        sx={{ mt: 1 }}
+                      >
+                        Convert URL to JPG (if having upload issues)
+                      </Button>
+                    )}
                   </Box>
                   
                   <Box sx={{ mb: 3, mt: 4 }}>
