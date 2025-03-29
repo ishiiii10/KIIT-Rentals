@@ -70,11 +70,11 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
   // Get appropriate color for category
   const getCategoryColor = () => {
     switch(product.category) {
-      case 'books': return 'success';
-      case 'vehicles': return 'info';
-      case 'snacks': return 'warning';
-      case 'clothing': return 'error';
-      default: return 'success';
+      case 'books': return 'secondary'; // Purple
+      case 'vehicles': return 'info'; // Blue
+      case 'snacks': return 'warning'; // Yellow/Orange
+      case 'clothing': return 'error'; // Red
+      default: return 'secondary';
     }
   };
 
@@ -121,7 +121,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
       <Chip
         icon={getCategoryIcon()}
         label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-        color={getCategoryColor() as 'success' | 'info' | 'warning' | 'error'}
+        color={getCategoryColor() as 'success' | 'info' | 'warning' | 'error' | 'secondary'}
         size="small"
         sx={{
           position: 'absolute',
@@ -137,8 +137,19 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
         }}
       />
 
-      {/* Product image - fixed height */}
-      <Box sx={{ position: 'relative', height: 200, width: '100%', overflow: 'hidden' }}>
+      {/* Product image - fixed height & enforced aspect ratio */}
+      <Box 
+        sx={{ 
+          position: 'relative', 
+          height: 200, 
+          width: '100%', 
+          overflow: 'hidden',
+          backgroundColor: 'rgba(0, 0, 0, 0.04)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         <CardMedia
           component="img"
           image={product.image}
@@ -179,7 +190,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
       </Box>
 
       {/* Product details - fixed height */}
-      <CardContent sx={{ p: 2.5, pb: 1.5, height: 110, display: 'flex', flexDirection: 'column' }}>
+      <CardContent sx={{ p: 2.5, pb: 1.5, height: 110, display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
         <Typography 
           variant="h6" 
           component="h3" 
