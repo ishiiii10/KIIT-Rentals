@@ -469,20 +469,26 @@ const Products = () => {
                   key={`skeleton-${index}`}
                   sx={{ 
                     width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
-                    p: 1.5 
+                    p: 1.5,
+                    minHeight: 450,
+                    display: 'flex'
                   }}
                 >
                   <Paper sx={{ 
                     borderRadius: 2, 
                     overflow: 'hidden', 
                     height: 450, 
-                    width: '100%'
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
                   }}>
                     <Skeleton variant="rectangular" width="100%" height={200} />
-                    <Box sx={{ p: 2 }}>
+                    <Box sx={{ p: 2, flex: 1, display: 'flex', flexDirection: 'column' }}>
                       <Skeleton variant="text" width="80%" height={32} />
                       <Skeleton variant="text" width="50%" height={24} />
-                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ mt: 2, borderRadius: 1 }} />
+                      <Box sx={{ mt: 'auto' }}>
+                        <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 1 }} />
+                      </Box>
                     </Box>
                   </Paper>
                 </Box>
@@ -520,10 +526,14 @@ const Products = () => {
                         key={product._id} 
                         sx={{ 
                           width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
-                          p: 1.5 
+                          p: 1.5,
+                          minHeight: 450,
+                          display: 'flex'
                         }}
                       >
-                        <ProductCard product={product} />
+                        <Box sx={{ width: '100%', height: '100%' }}>
+                          <ProductCard product={product} />
+                        </Box>
                       </Box>
                     ))}
                   </Box>
