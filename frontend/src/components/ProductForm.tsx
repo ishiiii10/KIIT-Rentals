@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Box, 
   Button, 
   TextField, 
   Typography, 
   CircularProgress, 
-  Grid, 
   Paper,
   Divider,
   FormControl,
@@ -14,7 +13,6 @@ import {
   InputAdornment,
   FormHelperText,
   Stack,
-  Slider,
   Tooltip,
   IconButton,
   FormLabel,
@@ -24,14 +22,12 @@ import {
   useTheme,
   useMediaQuery,
   alpha,
-  Chip,
-  Input
+  Chip
 } from '@mui/material';
-import { Formik, Form, Field } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Product } from '../api/product';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import InfoIcon from '@mui/icons-material/Info';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
@@ -54,6 +50,7 @@ const defaultProduct = {
   price: 0,
   image: '',
   type: 'sale' as 'sale' | 'rent',
+  category: 'books' as 'books' | 'vehicles' | 'snacks' | 'clothing',
   phone: ''
 };
 
@@ -73,6 +70,7 @@ const validationSchema = Yup.object({
         );
       }),
   type: Yup.string().oneOf(['sale', 'rent'], 'Type must be either sale or rent').required('Listing type is required'),
+  category: Yup.string().oneOf(['books', 'vehicles', 'snacks', 'clothing'], 'Please select a valid category').required('Category is required'),
   phone: Yup.string()
     .required('Phone number is required')
     .matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number')
@@ -82,10 +80,14 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isNewProduct = !initialValues._id;
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  // Track uploaded image state
+  const [uploadedImage, setUploadedImage] = useState<string | null>(initialValues.image || null);
+
+  // Check if image is from an upload (base64) or external URL
+  const isImageUploaded = Boolean(uploadedImage && uploadedImage.startsWith('data:image'));
 
   // Function to handle file upload and convert to JPG
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: Function) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: (field: string, value: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -99,25 +101,54 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
-        // Create canvas to convert image to JPG
+        // Calculate new dimensions - limit to max 1200px width/height while preserving aspect ratio
+        let width = img.width;
+        let height = img.height;
+        const MAX_SIZE = 1200;
+        
+        if (width > MAX_SIZE || height > MAX_SIZE) {
+          if (width > height) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          } else {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+        
+        // Create canvas to resize and convert image to JPG
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = width;
+        canvas.height = height;
         
         // Draw image on canvas with white background (to handle transparency)
         if (ctx) {
           ctx.fillStyle = '#FFFFFF';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0);
+          ctx.drawImage(img, 0, 0, width, height);
           
-          // Convert to JPEG format
-          const jpgImage = canvas.toDataURL('image/jpeg', 0.9); // 0.9 is quality (0-1)
-          setUploadedImage(jpgImage);
-          setFieldValue('image', jpgImage);
+          // Convert to JPEG format with moderate compression
+          try {
+            const jpgImage = canvas.toDataURL('image/jpeg', 0.7); // 0.7 quality for better compression
+            console.log('Image converted successfully');
+            setUploadedImage(jpgImage);
+            setFieldValue('image', jpgImage);
+          } catch (error) {
+            console.error('Error converting image:', error);
+            alert('There was an error processing your image. Please try a different image or use an image URL instead.');
+          }
         }
       };
+      img.onerror = () => {
+        console.error('Error loading image');
+        alert('There was an error loading your image. Please try a different image or use an image URL instead.');
+      };
       img.src = reader.result as string;
+    };
+    reader.onerror = () => {
+      console.error('Error reading file');
+      alert('There was an error reading your file. Please try a different image or use an image URL instead.');
     };
     reader.readAsDataURL(file);
   };
@@ -218,6 +249,7 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                 price: values.price,
                 image: values.image,
                 type: values.type,
+                category: values.category,
                 phone: values.phone, // Explicitly include the phone
               };
               
@@ -389,6 +421,113 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                   </Box>
                   
                   <Box sx={{ mb: 3 }}>
+                    <FormControl 
+                      component="fieldset" 
+                      fullWidth
+                      error={touched.category && Boolean(errors.category)}
+                      sx={{ 
+                        p: 2, 
+                        border: `1px solid ${touched.category && errors.category ? theme.palette.error.main : alpha(theme.palette.divider, 0.5)}`,
+                        borderRadius: 2,
+                        '&:hover': {
+                          borderColor: touched.category && errors.category ? theme.palette.error.main : theme.palette.primary.main,
+                        }
+                      }}
+                    >
+                      <FormLabel 
+                        component="legend"
+                        sx={{ 
+                          px: 1, 
+                          backgroundColor: 'background.paper',
+                          fontWeight: 'medium'
+                        }}
+                      >
+                        Category
+                      </FormLabel>
+                      <RadioGroup
+                        row
+                        name="category"
+                        value={values.category}
+                        onChange={handleChange}
+                        sx={{ mt: 1 }}
+                      >
+                        <FormControlLabel 
+                          value="books" 
+                          control={<Radio color="success" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <LocalOfferIcon color="success" fontSize="small" />
+                              <Typography fontWeight={values.category === 'books' ? 'bold' : 'normal'}>
+                                Books
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            mr: 4,
+                            backgroundColor: values.category === 'books' ? alpha(theme.palette.success.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                        <FormControlLabel 
+                          value="vehicles" 
+                          control={<Radio color="info" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <LocalOfferIcon color="info" fontSize="small" />
+                              <Typography fontWeight={values.category === 'vehicles' ? 'bold' : 'normal'}>
+                                Vehicles
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            backgroundColor: values.category === 'vehicles' ? alpha(theme.palette.info.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                        <FormControlLabel 
+                          value="snacks" 
+                          control={<Radio color="warning" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <LocalOfferIcon color="warning" fontSize="small" />
+                              <Typography fontWeight={values.category === 'snacks' ? 'bold' : 'normal'}>
+                                Snacks
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            backgroundColor: values.category === 'snacks' ? alpha(theme.palette.warning.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                        <FormControlLabel 
+                          value="clothing" 
+                          control={<Radio color="error" />} 
+                          label={
+                            <Stack direction="row" alignItems="center" spacing={1}>
+                              <LocalOfferIcon color="error" fontSize="small" />
+                              <Typography fontWeight={values.category === 'clothing' ? 'bold' : 'normal'}>
+                                Clothing
+                              </Typography>
+                            </Stack>
+                          }
+                          sx={{ 
+                            backgroundColor: values.category === 'clothing' ? alpha(theme.palette.error.main, 0.1) : 'transparent',
+                            borderRadius: 2,
+                            px: 1,
+                          }}
+                        />
+                      </RadioGroup>
+                      {touched.category && errors.category && (
+                        <FormHelperText>{errors.category}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Box>
+                  
+                  <Box sx={{ mb: 3 }}>
                     <TextField
                       fullWidth
                       id="phone"
@@ -518,57 +657,73 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                   </Box>
                   
                   <Box sx={{ mb: 3, mt: 4 }}>
-                    {values.image ? (
-                      <Box
-                        sx={{
-                          border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                          borderRadius: 2,
-                          p: 1,
-                          backgroundColor: 'background.paper',
-                          boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
-                        }}
-                      >
+                    <Box
+                      sx={{
+                        border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                        borderRadius: 2,
+                        p: 1,
+                        backgroundColor: 'background.paper',
+                        boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
+                        position: 'relative',
+                      }}
+                    >
+                      {values.image ? (
+                        <>
+                          <Box 
+                            component="img"
+                            src={values.image}
+                            alt="Product preview"
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                              e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Invalid+Image+URL';
+                            }}
+                            sx={{
+                              width: '100%',
+                              height: 220,
+                              objectFit: 'contain',
+                              borderRadius: 1,
+                              backgroundColor: alpha(theme.palette.divider, 0.05),
+                            }}
+                          />
+                          {isImageUploaded && (
+                            <Chip 
+                              label="Uploaded Image" 
+                              color="primary"
+                              size="small"
+                              sx={{ 
+                                position: 'absolute', 
+                                bottom: 10, 
+                                right: 10,
+                                fontWeight: 'bold' 
+                              }}
+                            />
+                          )}
+                          <Box sx={{ mt: 1, textAlign: 'center' }}>
+                            <Typography variant="caption" color="text.secondary">
+                              Image Preview (JPG format)
+                            </Typography>
+                          </Box>
+                        </>
+                      ) : (
                         <Box
-                          component="img"
-                          src={values.image}
-                          alt="Product preview"
-                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                            e.currentTarget.src = 'https://via.placeholder.com/300x200?text=Invalid+Image+URL';
-                          }}
                           sx={{
-                            width: '100%',
+                            border: `2px dashed ${alpha(theme.palette.divider, 0.5)}`,
+                            borderRadius: 2,
+                            p: 4,
+                            backgroundColor: alpha(theme.palette.divider, 0.03),
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             height: 220,
-                            objectFit: 'contain',
-                            borderRadius: 1,
-                            backgroundColor: alpha(theme.palette.divider, 0.05),
                           }}
-                        />
-                        <Box sx={{ mt: 1, textAlign: 'center' }}>
-                          <Typography variant="caption" color="text.secondary">
-                            Image Preview (JPG format)
+                        >
+                          <PhotoCameraIcon sx={{ fontSize: 48, color: alpha(theme.palette.text.secondary, 0.5), mb: 2 }} />
+                          <Typography variant="body1" color="text.secondary" align="center">
+                            Add an image URL or upload a file to see preview
                           </Typography>
                         </Box>
-                      </Box>
-                    ) : (
-                      <Box
-                        sx={{
-                          border: `2px dashed ${alpha(theme.palette.divider, 0.5)}`,
-                          borderRadius: 2,
-                          p: 4,
-                          backgroundColor: alpha(theme.palette.divider, 0.03),
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          height: 220,
-                        }}
-                      >
-                        <PhotoCameraIcon sx={{ fontSize: 48, color: alpha(theme.palette.text.secondary, 0.5), mb: 2 }} />
-                        <Typography variant="body1" color="text.secondary" align="center">
-                          Add an image URL or upload a file to see preview
-                        </Typography>
-                      </Box>
-                    )}
+                      )}
+                    </Box>
                   </Box>
                   
                   {/* Item Card Preview (simplified) */}
