@@ -182,10 +182,15 @@ const ProductDetail = () => {
             p: { xs: 3, sm: 4 },
             display: 'flex',
             flexDirection: 'column',
-            height: { md: '450px' },
+            height: { md: 'auto' },
+            maxHeight: { md: '550px' },
+            overflow: { md: 'auto' },
             justifyContent: 'space-between'
           }}>
-            <Box>
+            <Box sx={{ 
+              maxWidth: { md: '90%' },
+              overflow: 'auto'
+            }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
                 <Typography variant="h4" component="h1" fontWeight="500">
                   {product.name}
@@ -322,12 +327,22 @@ const ProductDetail = () => {
               <Divider sx={{ my: 2 }} />
 
               {/* Product Description */}
-              <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              <Typography 
+                variant="body1" 
+                sx={{ 
+                  color: 'text.secondary',
+                  wordBreak: 'break-word',
+                  mb: 3
+                }}
+              >
                 This {product.type === 'rent' ? 'rental item' : 'product'} is offered by a KIIT student. Contact the seller for more details or to arrange {product.type === 'rent' ? 'rental' : 'purchase'}.
               </Typography>
             </Box>
 
-            <Box>
+            <Box sx={{ 
+              maxWidth: { md: '90%' },
+              mt: 2 
+            }}>
               {/* Action Buttons */}
               {product.phone && (
                 <Button
