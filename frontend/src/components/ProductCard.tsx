@@ -7,9 +7,7 @@ import {
   Box,
   CardActions,
   Chip,
-  IconButton,
   Divider,
-  Tooltip,
   Stack,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +17,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PhoneIcon from '@mui/icons-material/Phone';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import FastfoodIcon from '@mui/icons-material/Fastfood';
+import CheckroomIcon from '@mui/icons-material/Checkroom';
 
 interface ProductCardProps {
   product: Product;
@@ -55,6 +56,28 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
 
   console.log('Product type:', product.type, 'isForRent:', isForRent);
 
+  // Get appropriate icon for category
+  const getCategoryIcon = () => {
+    switch(product.category) {
+      case 'books': return <MenuBookIcon fontSize="small" />;
+      case 'vehicles': return <DirectionsCarIcon fontSize="small" />;
+      case 'snacks': return <FastfoodIcon fontSize="small" />;
+      case 'clothing': return <CheckroomIcon fontSize="small" />;
+      default: return <MenuBookIcon fontSize="small" />;
+    }
+  };
+
+  // Get appropriate color for category
+  const getCategoryColor = () => {
+    switch(product.category) {
+      case 'books': return 'success';
+      case 'vehicles': return 'info';
+      case 'snacks': return 'warning';
+      case 'clothing': return 'error';
+      default: return 'success';
+    }
+  };
+
   return (
     <Card
       sx={{
@@ -84,6 +107,26 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
           position: 'absolute',
           top: 12,
           right: 12,
+          zIndex: 10,
+          fontWeight: 'bold',
+          px: 1,
+          color: 'white',
+          '& .MuiChip-icon': {
+            color: 'white'
+          }
+        }}
+      />
+
+      {/* Category chip */}
+      <Chip
+        icon={getCategoryIcon()}
+        label={product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+        color={getCategoryColor() as 'success' | 'info' | 'warning' | 'error'}
+        size="small"
+        sx={{
+          position: 'absolute',
+          top: 12,
+          left: 12,
           zIndex: 10,
           fontWeight: 'bold',
           px: 1,
