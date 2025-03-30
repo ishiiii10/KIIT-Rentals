@@ -9,11 +9,15 @@ import {
   Chip,
   CircularProgress,
   Alert,
+  Divider,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PhoneIcon from '@mui/icons-material/Phone';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import EventIcon from '@mui/icons-material/Event';
+import WarningIcon from '@mui/icons-material/Warning';
 import { getProducts } from '../api/product';
 import { Product } from '../api/product';
 import { useAuth } from '../context/AuthContext';
@@ -225,7 +229,7 @@ const ProductDetail = () => {
 
               {/* Contact Information */}
               {product.phone && (
-                <Box sx={{ mb: 4 }}>
+                <Box sx={{ mb: 3 }}>
                   <Typography variant="subtitle2" color="text.secondary">
                     Contact Seller
                   </Typography>
@@ -243,6 +247,79 @@ const ProductDetail = () => {
                   </Typography>
                 </Box>
               )}
+
+              {/* Address Information */}
+              {product.address && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Location
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      color: 'text.primary',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <LocationOnIcon sx={{ mr: 1, fontSize: '1.2rem', mt: 0.3, color: '#4caf50' }} />
+                    {product.address}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Deadline Information */}
+              {product.deadline && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Available Until
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      color: 'text.primary',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <EventIcon sx={{ mr: 1, fontSize: '1.2rem', mt: 0.3, color: '#1976d2' }} />
+                    {new Date(product.deadline).toLocaleDateString('en-IN', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Expiry Information - only for snacks */}
+              {product.category === 'snacks' && product.expiry && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Expires On
+                  </Typography>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      color: 'error.main',
+                      fontWeight: '500'
+                    }}
+                  >
+                    <WarningIcon sx={{ mr: 1, fontSize: '1.2rem', mt: 0.3, color: 'warning.main' }} />
+                    {new Date(product.expiry).toLocaleDateString('en-IN', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </Typography>
+                </Box>
+              )}
+              
+              <Divider sx={{ my: 2 }} />
 
               {/* Product Description */}
               <Typography variant="body1" sx={{ color: 'text.secondary' }}>
