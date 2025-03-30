@@ -391,7 +391,7 @@ const Products = () => {
                       }}
                     >
                       <FastfoodIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#ff9800' }} />
-                      Smacks
+                      Snacks
                     </MenuItem>
                     
                     <MenuItem 
