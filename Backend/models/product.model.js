@@ -25,6 +25,18 @@ const productSchema = new mongoose.Schema({
         default: 'books',
         required: true
     },
+    address: {
+        type: String,
+        required: false
+    },
+    deadline: {
+        type: String,
+        required: false
+    },
+    expiry: {
+        type: String,
+        required: false
+    },
     phone: {
         type: String,
         required: true

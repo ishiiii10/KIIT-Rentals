@@ -9,6 +9,9 @@ export interface Product {
   type: 'sale' | 'rent';
   category: 'books' | 'vehicles' | 'snacks' | 'clothing';
   phone: string;
+  address?: string;
+  deadline?: string;
+  expiry?: string;
   createdAt?: string;
   updatedAt?: string;
 }
