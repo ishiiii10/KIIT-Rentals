@@ -175,11 +175,14 @@ const Products = () => {
       sx={{ 
         backgroundColor: 'background.default',
         minHeight: '100vh',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         pt: { xs: 3, sm: 4 },
         pb: { xs: 6, md: 8 }
       }}
     >
-      <Container>
+      <Container sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Header Section */}
         <Box sx={{ mb: { xs: 3, md: 5 } }}>
           <Typography 
@@ -391,7 +394,7 @@ const Products = () => {
                       }}
                     >
                       <FastfoodIcon sx={{ mr: 1, fontSize: '1.2rem', color: '#ff9800' }} />
-                      Smacks
+                      Snacks
                     </MenuItem>
                     
                     <MenuItem 
@@ -413,7 +416,7 @@ const Products = () => {
         </Box>
 
         {/* Results Section */}
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
           {/* Filter information */}
           <Box 
             sx={{ 
@@ -463,7 +466,15 @@ const Products = () => {
 
           {/* Products grid */}
           {loading ? (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', mx: -1.5, mt: 3 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              mx: -1.5, 
+              mt: 3,
+              flexGrow: 1,
+              alignContent: 'flex-start',
+              minHeight: '60vh'
+            }}>
               {Array(8).fill(null).map((_, index) => (
                 <Box 
                   key={`skeleton-${index}`}
@@ -502,6 +513,11 @@ const Products = () => {
                     p: 4, 
                     textAlign: 'center', 
                     mt: 3,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    flexGrow: 1,
+                    minHeight: '50vh',
                     borderRadius: 3,
                     backgroundColor: 'rgba(88, 128, 97, 0.05)',
                     border: '1px solid rgba(88, 128, 97, 0.1)'
@@ -515,11 +531,13 @@ const Products = () => {
                   </Typography>
                 </Paper>
               ) : (
-                <Box sx={{ mt: 3 }}>
+                <Box sx={{ mt: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ 
                     display: 'flex', 
                     flexWrap: 'wrap', 
-                    mx: -1.5
+                    mx: -1.5,
+                    flexGrow: 1,
+                    alignContent: 'flex-start'
                   }}>
                     {filteredProducts.map((product) => (
                       <Box 
