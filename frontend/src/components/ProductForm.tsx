@@ -37,6 +37,9 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ImageIcon from '@mui/icons-material/Image';
 import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import EventIcon from '@mui/icons-material/Event';
+import WarningIcon from '@mui/icons-material/Warning';
 
 interface ProductFormProps {
   initialValues?: Product;
@@ -51,7 +54,10 @@ const defaultProduct = {
   image: '',
   type: 'sale' as 'sale' | 'rent',
   category: 'books' as 'books' | 'vehicles' | 'snacks' | 'clothing',
-  phone: ''
+  phone: '',
+  address: '',
+  deadline: '',
+  expiry: ''
 };
 
 const validationSchema = Yup.object({
@@ -79,7 +85,52 @@ const validationSchema = Yup.object({
   category: Yup.string().oneOf(['books', 'vehicles', 'snacks', 'clothing'], 'Please select a valid category').required('Category is required'),
   phone: Yup.string()
     .required('Phone number is required')
-    .matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number')
+    .matches(/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number'),
+  address: Yup.string()
+    .required('Address is required')
+    .min(5, 'Address should be at least 5 characters'),
+  deadline: Yup.string()
+    .test('valid-date', 'Deadline date is invalid or in the past', function(value) {
+      // Optional field
+      if (!value) return true;
+      
+      const date = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      return !isNaN(date.getTime()) && date >= today;
+    }),
+  expiry: Yup.string()
+    .test('valid-expiry', 'Expiry date is invalid or in the past', function(value) {
+      const { category } = this.parent;
+      
+      // Only required for snacks
+      if (category !== 'snacks') return true;
+      
+      // Required for snacks
+      if (category === 'snacks' && !value) {
+        return false;
+      }
+      
+      if (value) {
+        const date = new Date(value);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        return !isNaN(date.getTime()) && date >= today;
+      }
+      
+      return true;
+    })
+    .test('required-for-snacks', 'Expiry date is required for snacks', function(value) {
+      const { category } = this.parent;
+      
+      if (category === 'snacks' && !value) {
+        return false;
+      }
+      
+      return true;
+    })
 });
 
 const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = false, title }: ProductFormProps) => {
@@ -330,7 +381,7 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
           validationSchema={validationSchema}
           onSubmit={async (values) => {
             try {
-              // Explicitly create a new object with all fields to ensure phone is included
+              // Explicitly create a new object with all fields to ensure all required fields are included
               const productToSubmit = {
                 _id: values._id,
                 name: values.name,
@@ -338,11 +389,20 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                 image: values.image,
                 type: values.type,
                 category: values.category,
-                phone: values.phone, // Explicitly include the phone
+                phone: values.phone,
+                address: values.address,
+                deadline: values.deadline,
+                expiry: values.category === 'snacks' ? values.expiry : undefined
               };
               
               console.log('Form values before submission:', values);
               console.log('Phone number being submitted:', values.phone);
+              console.log('Address being submitted:', values.address);
+              console.log('Deadline being submitted:', values.deadline);
+              
+              if (values.category === 'snacks') {
+                console.log('Expiry date being submitted:', values.expiry);
+              }
               
               // Log image data characteristics for debugging
               if (values.image) {
@@ -655,6 +715,118 @@ const ProductForm = ({ initialValues = defaultProduct, onSubmit, isLoading = fal
                       }}
                     />
                   </Box>
+                  
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="address"
+                      name="address"
+                      label="Address"
+                      placeholder="Enter your address"
+                      value={values.address}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.address && Boolean(errors.address)}
+                      helperText={touched.address && errors.address}
+                      margin="normal"
+                      multiline
+                      rows={2}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LocationOnIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        }
+                      }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                      Your address will only be shown to buyers on the product details page
+                    </Typography>
+                  </Box>
+                  
+                  {/* Deadline Date Field - For all products */}
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      id="deadline"
+                      name="deadline"
+                      label="Listing Deadline (Optional)"
+                      type="date"
+                      value={values.deadline}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={touched.deadline && Boolean(errors.deadline)}
+                      helperText={
+                        (touched.deadline && errors.deadline) || 
+                        "When should this listing expire?"
+                      }
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <EventIcon color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      sx={{ 
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                        }
+                      }}
+                    />
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                      This optional deadline will show on the product details page
+                    </Typography>
+                  </Box>
+                  
+                  {/* Expiry Date Field - Only visible for snacks category */}
+                  {values.category === 'snacks' && (
+                    <Box sx={{ mb: 3 }}>
+                      <TextField
+                        fullWidth
+                        id="expiry"
+                        name="expiry"
+                        label="Food Expiry Date"
+                        type="date"
+                        value={values.expiry}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={touched.expiry && Boolean(errors.expiry)}
+                        helperText={
+                          (touched.expiry && errors.expiry) || 
+                          "When does this food item expire?"
+                        }
+                        required
+                        margin="normal"
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <WarningIcon color="warning" />
+                            </InputAdornment>
+                          ),
+                        }}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                        sx={{ 
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                          }
+                        }}
+                      />
+                      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                        Required for food items. Will be shown on the product details page.
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
                 
                 {/* Right Column */}
