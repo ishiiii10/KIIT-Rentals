@@ -29,6 +29,12 @@ import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+// Utility function to normalize category names and handle case sensitivity
+const matchesCategory = (productCategory: string, filterCategory: string): boolean => {
+  if (!productCategory || !filterCategory) return false;
+  return productCategory.toLowerCase() === filterCategory.toLowerCase();
+};
+
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -78,25 +84,50 @@ const Products = () => {
   useEffect(() => {
     let filtered = [...products];
     
+    console.log('Filtering products. Total products:', products.length);
+    console.log('Current category filter:', selectedCategory);
+    
     // Filter by search term
     if (searchTerm.trim() !== '') {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      console.log('After search filter:', filtered.length);
     }
     
     // Filter by listing type
     if (listingType !== 'all') {
       filtered = filtered.filter((product) => product.type === listingType);
+      console.log('After listing type filter:', filtered.length);
     }
     
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter((product) => product.category === selectedCategory);
+      console.log('Filtering by category:', selectedCategory);
+      console.log('Products before category filter:', filtered.map(p => ({id: p._id, category: p.category})));
+      
+      filtered = filtered.filter((product) => matchesCategory(product.category, selectedCategory));
+      
+      console.log('After category filter:', filtered.length);
+      console.log('Filtered products:', filtered.map(p => ({id: p._id, category: p.category})));
     }
     
     setFilteredProducts(filtered);
   }, [searchTerm, products, listingType, selectedCategory]);
+
+  // At the beginning of the component, add this debug log
+  useEffect(() => {
+    if (selectedCategory === 'snacks' || selectedCategory === 'clothing') {
+      console.log(`DEBUG ${selectedCategory.toUpperCase()} FILTER:`, 
+        products.filter(p => matchesCategory(p.category, selectedCategory)).map(p => ({
+          id: p._id,
+          name: p.name,
+          exactCategory: p.category,
+          matches: matchesCategory(p.category, selectedCategory)
+        }))
+      );
+    }
+  }, [selectedCategory, products]);
 
   const handleListingTypeChange = (
     event: React.MouseEvent<HTMLElement>,
