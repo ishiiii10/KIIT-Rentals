@@ -29,6 +29,12 @@ import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+// Utility function to normalize category names and handle case sensitivity
+const matchesCategory = (productCategory: string, filterCategory: string): boolean => {
+  if (!productCategory || !filterCategory) return false;
+  return productCategory.toLowerCase() === filterCategory.toLowerCase();
+};
+
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -78,25 +84,50 @@ const Products = () => {
   useEffect(() => {
     let filtered = [...products];
     
+    console.log('Filtering products. Total products:', products.length);
+    console.log('Current category filter:', selectedCategory);
+    
     // Filter by search term
     if (searchTerm.trim() !== '') {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
+      console.log('After search filter:', filtered.length);
     }
     
     // Filter by listing type
     if (listingType !== 'all') {
       filtered = filtered.filter((product) => product.type === listingType);
+      console.log('After listing type filter:', filtered.length);
     }
     
     // Filter by category
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter((product) => product.category === selectedCategory);
+      console.log('Filtering by category:', selectedCategory);
+      console.log('Products before category filter:', filtered.map(p => ({id: p._id, category: p.category})));
+      
+      filtered = filtered.filter((product) => matchesCategory(product.category, selectedCategory));
+      
+      console.log('After category filter:', filtered.length);
+      console.log('Filtered products:', filtered.map(p => ({id: p._id, category: p.category})));
     }
     
     setFilteredProducts(filtered);
   }, [searchTerm, products, listingType, selectedCategory]);
+
+  // At the beginning of the component, add this debug log
+  useEffect(() => {
+    if (selectedCategory === 'snacks' || selectedCategory === 'clothing') {
+      console.log(`DEBUG ${selectedCategory.toUpperCase()} FILTER:`, 
+        products.filter(p => matchesCategory(p.category, selectedCategory)).map(p => ({
+          id: p._id,
+          name: p.name,
+          exactCategory: p.category,
+          matches: matchesCategory(p.category, selectedCategory)
+        }))
+      );
+    }
+  }, [selectedCategory, products]);
 
   const handleListingTypeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -176,15 +207,29 @@ const Products = () => {
         backgroundColor: 'background.default',
         minHeight: '100vh',
         height: '100%',
+        width: '100vw',
+        maxWidth: '100%',
         display: 'flex',
         flexDirection: 'column',
         pt: { xs: 3, sm: 4 },
-        pb: { xs: 6, md: 8 }
+        pb: { xs: 6, md: 8 },
+        overflowX: 'hidden'
       }}
     >
-      <Container sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <Container 
+        disableGutters
+        maxWidth={false}
+        sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          width: '100%',
+          maxWidth: '100%',
+          px: { xs: 1, sm: 2 }
+        }}
+      >
         {/* Header Section */}
-        <Box sx={{ mb: { xs: 3, md: 5 } }}>
+        <Box sx={{ mb: { xs: 2, md: 3 } }}>
           <Typography 
             variant="h3" 
             component="h1" 
@@ -416,7 +461,13 @@ const Products = () => {
         </Box>
 
         {/* Results Section */}
-        <Box sx={{ mt: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ 
+          mt: 4, 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          width: '100%'
+        }}>
           {/* Filter information */}
           <Box 
             sx={{ 
@@ -469,7 +520,8 @@ const Products = () => {
             <Box sx={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
-              mx: -1.5, 
+              mx: { xs: -1, sm: -1.5 }, 
+              width: '100%',
               mt: 3,
               flexGrow: 1,
               alignContent: 'flex-start',
@@ -479,8 +531,8 @@ const Products = () => {
                 <Box 
                   key={`skeleton-${index}`}
                   sx={{ 
-                    width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' }, 
-                    p: 1.5,
+                    width: { xs: '100%', sm: '50%', md: '33.333%', lg: '25%', xl: '20%' }, 
+                    p: { xs: 1, sm: 1.5 },
                     minHeight: 450,
                     display: 'flex'
                   }}
@@ -517,7 +569,8 @@ const Products = () => {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     flexGrow: 1,
-                    minHeight: '50vh',
+                    minHeight: '70vh',
+                    width: '100%',
                     borderRadius: 3,
                     backgroundColor: 'rgba(88, 128, 97, 0.05)',
                     border: '1px solid rgba(88, 128, 97, 0.1)'
@@ -535,21 +588,28 @@ const Products = () => {
                   <Box sx={{ 
                     display: 'flex', 
                     flexWrap: 'wrap', 
-                    mx: -1.5,
+                    mx: { xs: -1, sm: -1.5 },
+                    width: '100%',
                     flexGrow: 1,
-                    alignContent: 'flex-start'
+                    alignContent: 'flex-start',
+                    minHeight: filteredProducts.length <= 4 ? '70vh' : 'auto'
                   }}>
                     {filteredProducts.map((product) => (
                       <Box 
                         key={product._id} 
                         sx={{ 
-                          width: { xs: '100%', sm: '50%', md: '33.33%', lg: '25%' },
-                          p: 1.5,
+                          width: { xs: '100%', sm: '50%', md: '33.333%', lg: '25%', xl: '20%' },
+                          p: { xs: 1, sm: 1.5 },
                           minHeight: 450,
                           display: 'flex'
                         }}
                       >
-                        <Box sx={{ width: '100%', height: '100%' }}>
+                        <Box sx={{ 
+                          width: '100%', 
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column'
+                        }}>
                           <ProductCard product={product} />
                         </Box>
                       </Box>
