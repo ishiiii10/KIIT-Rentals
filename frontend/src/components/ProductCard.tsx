@@ -95,6 +95,7 @@ const ProductCard = ({ product, onEdit, onDelete, isOwner = false }: ProductCard
           transform: 'translateY(-8px)',
           boxShadow: '0 12px 30px rgba(108, 99, 255, 0.15)',
         },
+        minWidth: 0, // Prevents card from growing beyond container
       }}
     >
       {/* Status chip */}
