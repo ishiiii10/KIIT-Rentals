@@ -58,9 +58,24 @@ const Login = () => {
       setLoading(true);
       setError(null);
       try {
+        console.log('Attempting login with:', values.email);
         const userData = await login(values);
-        setUser(userData);
-        navigate('/');
+        console.log('Login successful, user data:', userData);
+        console.log('Token received:', userData.token ? 'Yes (length: ' + userData.token.length + ')' : 'No');
+        
+        // Double-check localStorage
+        setTimeout(() => {
+          const storedToken = localStorage.getItem('token');
+          const storedUser = localStorage.getItem('user');
+          console.log('Token in localStorage after login:', Boolean(storedToken));
+          console.log('User in localStorage after login:', Boolean(storedUser));
+          
+          // Set user in context
+          setUser(userData);
+          
+          // Navigate to home page
+          navigate('/');
+        }, 100);
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'Login failed. Please try again.';
         setError(errorMessage);

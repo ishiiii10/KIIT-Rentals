@@ -33,15 +33,31 @@ export const login = async (credentials: LoginCredentials): Promise<User> => {
 
     // Store token in localStorage
     localStorage.setItem('token', userData.token);
-    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Create user object with correct format
+    const user = {
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+      token: userData.token
+    };
+    
+    // Store user in localStorage
+    localStorage.setItem('user', JSON.stringify(user));
 
-    return userData;
+    return user;
   } catch (error: unknown) {
-    console.error('Login error:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Login failed';
+    
+    // Type guard for axios-like error objects
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const responseError = error as { response?: { data?: { message?: string } } };
+      if (responseError.response?.data?.message) {
+        throw new Error(responseError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred during login');
+    
+    throw new Error(errorMessage);
   }
 };
 
@@ -56,15 +72,31 @@ export const register = async (credentials: RegisterCredentials): Promise<User> 
 
     // Store token in localStorage
     localStorage.setItem('token', userData.token);
-    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Create user object with correct format
+    const user = {
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+      token: userData.token
+    };
+    
+    // Store user in localStorage
+    localStorage.setItem('user', JSON.stringify(user));
 
-    return userData;
+    return user;
   } catch (error: unknown) {
-    console.error('Registration error:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Registration failed';
+    
+    // Type guard for axios-like error objects
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const responseError = error as { response?: { data?: { message?: string } } };
+      if (responseError.response?.data?.message) {
+        throw new Error(responseError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred during registration');
+    
+    throw new Error(errorMessage);
   }
 };
 
