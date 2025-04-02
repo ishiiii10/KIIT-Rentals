@@ -1,20 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import Grid from '@mui/material/Grid';
+import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
   Box, 
   Button, 
   Paper,
-  CircularProgress,
   Divider,
   useTheme,
   useMediaQuery,
-  Card,
-  CardMedia,
-  CardContent,
-  Stack
+  Stack,
+  Grid
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';

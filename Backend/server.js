@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 5001;
 // Middleware
 // Update CORS configuration to allow requests from the frontend
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kiit-rentals.vercel.app', 'https://kiit-rentals-anushrey10.vercel.app'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kiit-rentals.vercel.app', 'https://kiit-rentals-anushrey10.vercel.app', 'https://kiit-rentals-git-main-ishiiii10.vercel.app', 'https://kiit-rentals-ishiiii10.vercel.app', /\.vercel\.app$/],
   credentials: true
 }));
 app.use(express.json());
