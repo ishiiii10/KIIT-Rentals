@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
 import { 
   Container, 
-  Typography, 
-  Box, 
-  Button, 
-  CircularProgress,
+  Typography,
+  Box,
+  Button,
+  Alert,
+  AlertTitle,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Alert,
-  AlertTitle
+  CircularProgress
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
-import { getProducts, deleteProduct, Product, createProduct, updateProduct } from '../api/product';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getProducts, deleteProduct, createProduct, updateProduct } from '../api/product';
+import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
 import ProductForm from '../components/ProductForm';
 
@@ -52,9 +52,13 @@ const MyProducts = () => {
       // In a real app, this would filter by user ID
       // For now, we'll just show all products as if they belong to the user
       setProducts(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load your products. Please try again.');
-      console.error('Fetch products error:', err);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message || 'Failed to load your products. Please try again.');
+      } else {
+        setError('Failed to load your products. Please try again.');
+      }
+      console.error('Fetch products error:', error);
     } finally {
       setLoading(false);
     }
@@ -89,9 +93,13 @@ const MyProducts = () => {
       setTimeout(() => {
         setSuccess(null);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete product. Please try again.');
-      console.error('Delete product error:', err);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message || 'Failed to delete product. Please try again.');
+      } else {
+        setError('Failed to delete product. Please try again.');
+      }
+      console.error('Delete product error:', error);
     } finally {
       setIsSubmitting(false);
       setIsDeleteDialogOpen(false);
@@ -132,9 +140,13 @@ const MyProducts = () => {
       setTimeout(() => {
         setSuccess(null);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || 'Failed to save product. Please try again.');
-      console.error('Save product error:', err);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message || 'Failed to save product. Please try again.');
+      } else {
+        setError('Failed to save product. Please try again.');
+      }
+      console.error('Save product error:', error);
     } finally {
       setIsSubmitting(false);
     }

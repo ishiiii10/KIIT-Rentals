@@ -1,28 +1,22 @@
-import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import Grid from '@mui/material/Grid';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Button, 
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Grid,
   Paper,
-  CircularProgress,
-  Divider,
-  useTheme,
-  useMediaQuery,
-  Card,
-  CardMedia,
-  CardContent,
-  Stack
+  Stack,
+  Divider
 } from '@mui/material';
+import { useTheme, alpha } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { alpha } from '@mui/material/styles';
 
 const Home = () => {
   const theme = useTheme();
