@@ -146,6 +146,12 @@ const Products = () => {
     setFilterAnchorEl(null);
   };
   
+  const handleFilterChange = (newValue: string | null) => {
+    if (newValue !== null) {
+      setSearchTerm(newValue);
+    }
+  };
+  
   const handleCategoryChange = (category: 'all' | 'books' | 'vehicles' | 'snacks' | 'clothing') => {
     setSelectedCategory(category);
     handleFilterMenuClose();
@@ -169,10 +175,6 @@ const Products = () => {
       case 'clothing': return <CheckroomIcon />;
       default: return <FilterListIcon />;
     }
-  };
-
-  const handleFilterChange = (_event: React.ChangeEvent<{ value: unknown }>, newValue: string | null) => {
-    setFilter(newValue || '');
   };
 
   if (error) {
@@ -272,7 +274,7 @@ const Products = () => {
                   variant="outlined"
                   placeholder="Search products..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleFilterChange(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -496,7 +498,7 @@ const Products = () => {
               {searchTerm && (
                 <Chip 
                   label={`Search: "${searchTerm}"`}
-                  onDelete={() => setSearchTerm('')}
+                  onDelete={() => handleFilterChange(null)}
                   color="primary"
                   variant="outlined"
                   size="small"

@@ -1,9 +1,11 @@
 {
-  "extends": "./tsconfig.app.json",
-  "noEmit": true,
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
   "compilerOptions": {
     "skipLibCheck": true,
-    "noImplicitAny": false,
     "noEmitOnError": false
   }
 }
