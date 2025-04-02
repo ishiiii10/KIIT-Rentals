@@ -123,11 +123,7 @@ const theme = createTheme({
         root: {
           paddingLeft: { xs: 2, sm: 3, md: 4 },
           paddingRight: { xs: 2, sm: 3, md: 4 },
-          maxWidth: '1600px !important',
-          '@media (min-width: 600px)': {
-            paddingLeft: { xs: 2, sm: 3, md: 4 },
-            paddingRight: { xs: 2, sm: 3, md: 4 },
-          },
+          maxWidth: 1600,
         },
       },
     },

@@ -171,6 +171,10 @@ const Products = () => {
     }
   };
 
+  const handleFilterChange = (_event: React.ChangeEvent<{ value: unknown }>, newValue: string | null) => {
+    setFilter(newValue || '');
+  };
+
   if (error) {
     return (
       <Container sx={{ py: 8 }}>
