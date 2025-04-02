@@ -1,3 +1,40 @@
+# KIIT Rentals Frontend
+
+This is the frontend for the KIIT Rentals application, a marketplace for KIIT students to buy, sell, and rent items.
+
+## Features
+
+- User authentication and registration
+- Browse products by category
+- Add, edit, and delete your own listings
+- Detailed product views
+- Responsive design for all devices
+
+## Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## Deployment
+
+The frontend is deployed on Vercel and connects to a backend API hosted on Render at `https://kiit-rentals.onrender.com/api`.
+
+## Technologies
+
+- React
+- TypeScript
+- Material UI
+- Vite
+- Axios for API calls
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
