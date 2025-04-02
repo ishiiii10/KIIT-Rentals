@@ -87,7 +87,7 @@ const Home = () => {
         
         <Container sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <Box 
                 sx={{ 
                   textAlign: { xs: 'center', md: 'left' } 
@@ -190,7 +190,7 @@ const Home = () => {
                 </Stack>
               </Box>
             </Grid>
-            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Grid xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box 
                 component="img"
                 src="https://img.freepik.com/free-vector/college-students-concept-illustration_114360-10205.jpg"
@@ -671,7 +671,7 @@ const Home = () => {
       >
         <Container>
           <Grid container alignItems="center" spacing={4}>
-            <Grid item xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+            <Grid xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
               <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
                 Ready to Start Trading?
               </Typography>
@@ -679,7 +679,7 @@ const Home = () => {
                 Join hundreds of KIIT students already buying, selling, and renting on campus.
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+            <Grid xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
               <Button 
                 variant="contained" 
                 component={RouterLink} 
