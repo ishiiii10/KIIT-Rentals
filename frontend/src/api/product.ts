@@ -33,12 +33,12 @@ export const getProducts = async (): Promise<Product[]> => {
     });
     
     return products;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching products:', error);
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred while fetching products');
   }
 };
 
@@ -55,12 +55,12 @@ export const createProduct = async (product: Product): Promise<Product> => {
     
     console.log('Product created successfully:', response.data.data);
     return response.data.data as Product;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error creating product:', error);
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred while creating product');
   }
 };
 
@@ -76,12 +76,12 @@ export const updateProduct = async (id: string, product: Product): Promise<Produ
     
     console.log('Product updated successfully:', response.data.data);
     return response.data.data as Product;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating product:', error);
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred while updating product');
   }
 };
 
@@ -92,11 +92,11 @@ export const deleteProduct = async (id: string): Promise<void> => {
     if (!response.data.success) {
       throw new Error(response.data.message || 'Failed to delete product');
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting product:', error);
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred while deleting product');
   }
 }; 

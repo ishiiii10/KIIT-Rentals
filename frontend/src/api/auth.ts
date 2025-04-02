@@ -36,11 +36,12 @@ export const login = async (credentials: LoginCredentials): Promise<User> => {
     localStorage.setItem('user', JSON.stringify(userData));
 
     return userData;
-  } catch (error: any) {
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+  } catch (error: unknown) {
+    console.error('Login error:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred during login');
   }
 };
 
@@ -58,11 +59,12 @@ export const register = async (credentials: RegisterCredentials): Promise<User> 
     localStorage.setItem('user', JSON.stringify(userData));
 
     return userData;
-  } catch (error: any) {
-    if (error.response?.data?.message) {
-      throw new Error(error.response.data.message);
+  } catch (error: unknown) {
+    console.error('Registration error:', error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
-    throw error;
+    throw new Error('Unknown error occurred during registration');
   }
 };
 
