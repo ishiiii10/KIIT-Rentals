@@ -14,20 +14,23 @@ import {
   Divider,
   useScrollTrigger,
   Slide,
+  Badge,
   alpha
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HomeIcon from '@mui/icons-material/Home';
-import InventoryIcon from '@mui/icons-material/Inventory';
+import CategoryIcon from '@mui/icons-material/Category';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logout } from '../api/auth';
 
 const pages = [
   { name: 'Home', path: '/', icon: <HomeIcon /> },
-  { name: 'Products', path: '/products', icon: <InventoryIcon /> },
+  { name: 'Products', path: '/products', icon: <CategoryIcon /> },
 ];
 
 interface Props {

@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 5001;
 // Middleware
 // Update CORS configuration to allow requests from the frontend
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://kiit-rentals.netlify.app'],
   credentials: true
 }));
 app.use(express.json());
@@ -28,6 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use("/api/products", productRouter);
 app.use("/api/user", userRouter);
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {

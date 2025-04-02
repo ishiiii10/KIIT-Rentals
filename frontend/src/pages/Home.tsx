@@ -1,22 +1,28 @@
+import { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Typography,
-  Box,
-  Button,
-  Grid,
+import Grid from '@mui/material/Grid';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Button, 
   Paper,
-  Stack,
-  Divider
+  CircularProgress,
+  Divider,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardMedia,
+  CardContent,
+  Stack
 } from '@mui/material';
-import { useTheme, alpha } from '@mui/material/styles';
-import { useMediaQuery } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import SearchIcon from '@mui/icons-material/Search';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { alpha } from '@mui/material/styles';
 
 const Home = () => {
   const theme = useTheme();
@@ -87,7 +93,7 @@ const Home = () => {
         
         <Container sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
-            <Grid xs={12} md={6}>
+            <Grid item xs={12} md={6}>
               <Box 
                 sx={{ 
                   textAlign: { xs: 'center', md: 'left' } 
@@ -190,7 +196,7 @@ const Home = () => {
                 </Stack>
               </Box>
             </Grid>
-            <Grid xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box 
                 component="img"
                 src="https://img.freepik.com/free-vector/college-students-concept-illustration_114360-10205.jpg"
@@ -671,7 +677,7 @@ const Home = () => {
       >
         <Container>
           <Grid container alignItems="center" spacing={4}>
-            <Grid xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+            <Grid item xs={12} md={8} sx={{ textAlign: { xs: 'center', md: 'left' } }}>
               <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
                 Ready to Start Trading?
               </Typography>
@@ -679,7 +685,7 @@ const Home = () => {
                 Join hundreds of KIIT students already buying, selling, and renting on campus.
               </Typography>
             </Grid>
-            <Grid xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+            <Grid item xs={12} md={4} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
               <Button 
                 variant="contained" 
                 component={RouterLink} 

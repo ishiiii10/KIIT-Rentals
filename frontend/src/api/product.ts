@@ -35,10 +35,13 @@ export const getProducts = async (): Promise<Product[]> => {
     return products;
   } catch (error: unknown) {
     console.error('Error fetching products:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const serverError = error as { response?: { data?: { message?: string } } };
+      if (serverError.response?.data?.message) {
+        throw new Error(serverError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred while fetching products');
+    throw error instanceof Error ? error : new Error('Failed to fetch products');
   }
 };
 
@@ -47,20 +50,47 @@ export const createProduct = async (product: Product): Promise<Product> => {
     console.log('Creating product with data:', product);
     console.log('Phone field being sent to backend:', product.phone);
     
-    const response = await api.post<ApiResponse<Product>>('/products', product);
-    
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Failed to create product');
+    // Ensure we have a token
+    const token = localStorage.getItem('token');
+    console.log('Auth token found:', Boolean(token));
+    if (!token) {
+      throw new Error('Authentication required. Please log in.');
     }
     
-    console.log('Product created successfully:', response.data.data);
-    return response.data.data as Product;
+    // Debug API configuration
+    console.log('API baseURL:', api.defaults.baseURL);
+    console.log('Making POST request to:', `${api.defaults.baseURL}/products`);
+    
+    // Debug headers that will be sent
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+    console.log('Headers being sent:', headers);
+    
+    try {
+      const response = await api.post<ApiResponse<Product>>('/products', product);
+      console.log('Raw API response:', response);
+      
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Failed to create product');
+      }
+      
+      console.log('Product created successfully:', response.data.data);
+      return response.data.data as Product;
+    } catch (apiError) {
+      console.error('API call error details:', apiError);
+      throw apiError;
+    }
   } catch (error: unknown) {
     console.error('Error creating product:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const serverError = error as { response?: { data?: { message?: string } } };
+      if (serverError.response?.data?.message) {
+        throw new Error(serverError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred while creating product');
+    throw error instanceof Error ? error : new Error('Failed to create product');
   }
 };
 
@@ -78,10 +108,13 @@ export const updateProduct = async (id: string, product: Product): Promise<Produ
     return response.data.data as Product;
   } catch (error: unknown) {
     console.error('Error updating product:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const serverError = error as { response?: { data?: { message?: string } } };
+      if (serverError.response?.data?.message) {
+        throw new Error(serverError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred while updating product');
+    throw error instanceof Error ? error : new Error('Failed to update product');
   }
 };
 
@@ -94,9 +127,12 @@ export const deleteProduct = async (id: string): Promise<void> => {
     }
   } catch (error: unknown) {
     console.error('Error deleting product:', error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const serverError = error as { response?: { data?: { message?: string } } };
+      if (serverError.response?.data?.message) {
+        throw new Error(serverError.response.data.message);
+      }
     }
-    throw new Error('Unknown error occurred while deleting product');
+    throw error instanceof Error ? error : new Error('Failed to delete product');
   }
 }; 

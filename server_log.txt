@@ -1,0 +1,2 @@
+Server running in development mode on port 5001
+MongoDB Connected: cluster0-shard-00-01.a73la.mongodb.net

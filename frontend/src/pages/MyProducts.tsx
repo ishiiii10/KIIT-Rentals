@@ -1,23 +1,22 @@
 import { useState, useEffect } from 'react';
 import { 
   Container, 
-  Typography,
-  Box,
-  Button,
-  Alert,
-  AlertTitle,
+  Typography, 
+  Box, 
+  Button, 
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress
+  Alert,
+  AlertTitle
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
+import { getProducts, deleteProduct, Product, createProduct, updateProduct } from '../api/product';
 import { useAuth } from '../context/AuthContext';
-import { getProducts, deleteProduct, createProduct, updateProduct } from '../api/product';
-import { Product } from '../api/product';
 import ProductCard from '../components/ProductCard';
 import ProductForm from '../components/ProductForm';
 
@@ -37,6 +36,15 @@ const MyProducts = () => {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      // Redirect to login page if not authenticated
+      navigate('/login');
+      return;
+    }
+
+    // Check for token
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Authentication token not found. Please log in again.');
       navigate('/login');
       return;
     }
@@ -53,11 +61,10 @@ const MyProducts = () => {
       // For now, we'll just show all products as if they belong to the user
       setProducts(data);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message || 'Failed to load your products. Please try again.');
-      } else {
-        setError('Failed to load your products. Please try again.');
-      }
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to load your products. Please try again.';
+      setError(errorMessage);
       console.error('Fetch products error:', error);
     } finally {
       setLoading(false);
@@ -94,11 +101,10 @@ const MyProducts = () => {
         setSuccess(null);
       }, 3000);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message || 'Failed to delete product. Please try again.');
-      } else {
-        setError('Failed to delete product. Please try again.');
-      }
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to delete product. Please try again.';
+      setError(errorMessage);
       console.error('Delete product error:', error);
     } finally {
       setIsSubmitting(false);
@@ -122,17 +128,28 @@ const MyProducts = () => {
       };
       
       console.log('Product data being submitted:', productData);
+      console.log('Token available:', Boolean(localStorage.getItem('token')));
+      console.log('User available:', Boolean(localStorage.getItem('user')));
       
       if (productToEdit && productToEdit._id) {
         // Update existing product
+        console.log('Updating existing product with ID:', productToEdit._id);
         const updatedProduct = await updateProduct(productToEdit._id, productData);
+        console.log('Update response:', updatedProduct);
         setProducts(products.map(p => (p._id === updatedProduct._id ? updatedProduct : p)));
         setSuccess('Product updated successfully');
       } else {
         // Create new product
-        const newProduct = await createProduct(productData);
-        setProducts([...products, newProduct]);
-        setSuccess('Product created successfully');
+        console.log('Creating new product...');
+        try {
+          const newProduct = await createProduct(productData);
+          console.log('Create product response:', newProduct);
+          setProducts([...products, newProduct]);
+          setSuccess('Product created successfully');
+        } catch (createError) {
+          console.error('Detailed create product error:', createError);
+          throw createError;
+        }
       }
       setIsFormOpen(false);
       
@@ -141,11 +158,10 @@ const MyProducts = () => {
         setSuccess(null);
       }, 3000);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message || 'Failed to save product. Please try again.');
-      } else {
-        setError('Failed to save product. Please try again.');
-      }
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to save product. Please try again.';
+      setError(errorMessage);
       console.error('Save product error:', error);
     } finally {
       setIsSubmitting(false);
