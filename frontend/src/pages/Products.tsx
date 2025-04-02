@@ -130,7 +130,7 @@ const Products = () => {
   }, [selectedCategory, products]);
 
   const handleListingTypeChange = (
-    _event: React.MouseEvent<HTMLElement>,
+    event: React.MouseEvent<HTMLElement>,
     newListingType: 'all' | 'sale' | 'rent' | null
   ) => {
     if (newListingType !== null) {
